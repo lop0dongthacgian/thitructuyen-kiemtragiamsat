@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hội thi tìm hiểu công tác kiểm tra, giám sát của Đảng</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #fdf6ec;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(139,0,0,0.12);
+  
+}
+header {
+  text-align: center;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #8B0000, #b71c1c);
+  padding: 20px 15px;
+  border-radius: 8px;
+}
+header h1 {
+  background: linear-gradient(90deg, #ffe259, #ffd700, #ffb347, #ffd700, #ffe259);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+  font-size: 1.7rem;
+  text-shadow: 1.5px 1.5px 2px rgba(0,0,0,0.35);
+  position: relative;
+  padding: 14px 0;
+}
+header h1::before,
+header h1::after {
+  content: "";
+  display: block;
+  width: 220px;
+  height: 3px;
+  margin: 0 auto 10px;
+  background: linear-gradient(90deg, transparent, #ffd700 20%, #fff 50%, #ffd700 80%, transparent);
+  border-radius: 2px;
+}
+header h1::before {
+  margin: 0 auto 10px;
+}
+header h1::after {
+  margin: 10px auto 0;
+}
+header p {
+  color: #fff3cd;
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+h2 {
+  text-align: center;
+  margin: 20px 0 15px;
+  color: #333;
+  font-size: 1.3rem;
+}
+.question-text {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  color: #8B0000 !important;
+}
+label {
+  font-weight: 500;
+  color: #8B0000;
+  display: block;
+  margin-bottom: 6px;
+}
+input[type="text"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  padding: 14px 12px;
+  min-height: 50px;
+  line-height: 1.6;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+input[type="text"]:focus,
+input[type="tel"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #b8860b;
+  box-shadow: 0 0 0 3px rgba(184,134,11,0.18);
+}
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+.question {
+  margin-bottom: 20px;
+}
+.options {
+  display: grid;
+  gap: 8px;
+}
+.option {
+  display: flex;
+  align-items: center;
+}
+.option input {
+  margin-right: 8px;
+}
+.btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: linear-gradient(135deg, #e53935, #ff7043, #ffb300);
+  background-size: 200% 200%;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.35);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+.btn:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255,112,67,0.45);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+#success-message {
+  display: none;
+  text-align: center;
+  padding: 2em;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #ccc;
+}
+#error-message {
+  display: none;
+  text-align: center;
+  padding: 2em;
+  border-radius: 10px;
+  background: #ffebee;
+  border: 2px solid #f44336;
+}
+#timeout-message {
+  display: none;
+  text-align: center;
+  padding: 2em;
+  border-radius: 10px;
+  background: #fff3e0;
+  border: 2px solid #ff9800;
+}
+.success-icon { font-size: 60px; color: green; margin-bottom: 15px; }
+.error-icon { font-size: 60px; color: #f44336; margin-bottom: 15px; }
+.timeout-icon { font-size: 60px; color: #ff9800; margin-bottom: 15px; }
+.success-title { color: #28a745; margin-bottom: 10px; }
+.error-title { color: #d32f2f; margin-bottom: 10px; }
+.timeout-title { color: #e65100; margin-bottom: 10px; }
+.back-button {
+  display: inline-block;
+  padding: 0.7em 1.5em;
+  background: linear-gradient(135deg, #e53935, #ff7043);
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.back-button:hover { background: linear-gradient(135deg, #d32f2f, #ff5722); transform: translateY(-2px); }
+#errorBackBtn, #timeoutBackBtn { background: #f44336; color: #fff; }
+#errorBackBtn:hover, #timeoutBackBtn:hover { background: #d32f2f; }
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.rules-section {
+  background-color: #fdf8ee;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-left: 3px solid #b8860b;
+  border-right: 3px solid #b8860b;
+}
+.rules-section h2 { color: #8B0000; margin-top: 0; }
+.rules-section details { margin-top: 10px; }
+.rules-section summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #8B0000;
+  padding: 8px 0;
+}
+.rules-section ul { padding-left: 20px; margin-top: 10px; }
+.rules-section li { margin-bottom: 8px; line-height: 1.4; }
+
+.close-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 8px 25px;
+  background: transparent;
+  border: 2px solid #c62828;
+  color: #c62828;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.close-btn:hover { background: #c62828; color: white; }
+
+.small-text { font-size: 16px; font-weight: 500; color: #555; }
+.big-text { font-size: 22px; font-weight: 700; color: #b71c1c; letter-spacing: 0.5px; }
+
+/* Câu sai */
+.wrong-answers-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fff3cd;
+  border-left: 2px solid #ff9800;
+  border-right: 2px solid #ff9800;
+  border-radius: 8px;
+}
+.wrong-answers-title { font-size: 1.1rem; font-weight: 600; color: #d32f2f; margin-bottom: 10px; }
+.show-wrong-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+.show-wrong-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,152,0,0.4); }
+#wrong-answers-list {
+  display: none;
+  margin-top: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.wrong-question-item {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 2px solid #e74c3c;
+  border-right: 2px solid #e74c3c;
+}
+.wrong-question-text { font-weight: 600; color: #333; margin-bottom: 10px; }
+.wrong-answer-line { margin: 6px 0; padding: 6px 10px; border-radius: 4px; }
+.user-wrong-answer { color: #c62828; background: #ffebee; font-weight: 500; }
+.correct-answer-line { color: #2e7d32; background: #e8f5e9; font-weight: 600; }
+.correct-answer-line::before { content: "✓ "; font-size: 1.2rem; font-weight: bold; }
+
+/* THÔNG BÁO THỜI GIAN THI */
+.time-notification {
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.time-notification.before { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.time-notification.active {   background: linear-gradient(135deg, #2e7d32, #43a047);}
+.time-notification.after { background: linear-gradient( 135deg, rgba(198, 40, 40, 0.90), rgba(139, 0, 0, 0.82) ); }
+
+.countdown-container { margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 6px; }
+.countdown { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.countdown-item { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+.countdown-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.3);
+  border-radius: 5px;
+  padding: 5px 10px;
+  min-width: 50px;
+  text-align: center;
+}
+.countdown-label { font-size: 0.8rem; margin-top: 5px; text-transform: uppercase; }
+.countdown-title { font-size: 1rem; margin-bottom: 10px; font-weight: 600; }
+
+/* Đồng hồ làm bài - mặc định màu XANH */
+.test-timer {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 600px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b5e20, #2e7d32); /* Đổi sang xanh */
+  color: #ffffff;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.time-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 4px;
+  background: rgba(255,215,0,0.6);
+  width: 100%;
+  transition: width 1s linear;
+}
+.test-timer.warning-5min { background: linear-gradient(135deg, #ff9933, #ff6600); animation: pulse 1s infinite; }
+.test-timer.warning-1min { background: linear-gradient(135deg, #ff3333, #cc0000); animation: pulse 0.5s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+.test-timer span {
+  display: block;
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+#quiz-section { padding-top: 130px; display: none; }
+
+.extra-question { color: #8B0000 !important; }
+.cau-so { color: #b8860b; }
+.success-text { font-size: 1.1rem; line-height: 1.5; color: #333; margin-bottom: 15px; text-align: center; }
+
+/* ===== Ô CHỌN CHI BỘ + CỬA SỔ CHỌN TOÀN MÀN HÌNH ===== */
+.combo-wrap { position: relative; margin-bottom: 6px; }
+
+#chiboSearch {
+  cursor: pointer;
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
+  padding-right: 44px;
+}
+#chiboSearch::placeholder { color: #b8860b; opacity: .95; }
+
+/* Lớp phủ toàn màn hình */
+.chibo-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 100000;
+  background: #fdf6ec;
+  flex-direction: column;
+  animation: chiboFadeIn .18s ease;
+}
+.chibo-modal.open { display: flex; }
+@keyframes chiboFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.chibo-modal-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #8B0000, #b71c1c);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.chibo-modal-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.chibo-modal-close {
+  flex: 0 0 auto;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.65);
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: .2s;
+}
+.chibo-modal-close:hover { background: rgba(255,255,255,.35); }
+
+.chibo-modal-search {
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0e6cc;
+}
+.chibo-modal-search input {
+  width: 100%;
+  margin: 0;
+  padding: 13px 14px;
+  font-size: 16px;
+  min-height: auto;
+  border: 1.5px solid #b8860b;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.chibo-modal-search input:focus {
+  border-color: #8B0000;
+  box-shadow: 0 0 0 3px rgba(139,0,0,.14);
+}
+
+.chibo-modal-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  padding-bottom: 40px;
+}
+
+/* Item trong danh sách */
+.combo-item {
+  padding: 15px 18px;
+  cursor: pointer;
+  font-size: 16px;
+  border-bottom: 1px solid #f0e6cc;
+  color: #333;
+  transition: background .15s;
+}
+.combo-item:last-child { border-bottom: none; }
+.combo-item:hover,
+.combo-item:active { background: #fdf3d7; }
+.combo-empty {
+  color: #999;
+  font-style: italic;
+  cursor: default;
+  text-align: center;
+  padding: 30px 18px;
+}
+.combo-empty:hover { background: #fff; }
+.combo-group-header {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8B0000;
+  background: #fff8e1;
+  border-bottom: 1px solid #f0e6cc;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.combo-item.combo-sub { padding-left: 28px; }
+.combo-item mark { background: #ffe082; color: inherit; border-radius: 2px; padding: 0 1px; }
+.combo-item.combo-selected {
+  background: #e8f5e9;
+  color: #1b5e20;
+  font-weight: 600;
+}
+.combo-item.combo-selected::after {
+  content: " ✓";
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  .container { padding: 20px; }
+  header h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.2rem; }
+  .question-text { font-size: 1.2rem; }
+  .rules-section { padding: 12px; }
+  .btn { padding: 12px; font-size: 14px; }
+  .countdown { gap: 10px; }
+  .countdown-item { min-width: 50px; }
+  .countdown-value { font-size: 1.5rem; min-width: 40px; }
+}
+@media (max-width: 480px) {
+  header h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.1rem; }
+  .question-text { font-size: 1.1rem; }
+  .container { padding: 15px; }
+  .rules-section { padding: 10px; }
+  .countdown { gap: 8px; }
+  .countdown-item { min-width: 45px; }
+  .countdown-value { font-size: 1.3rem; min-width: 35px; }
+}
+
+/* BẢNG XẾP HẠNG TẠM THỜI */
+.ranking-section {
+  background: linear-gradient(135deg, #fffaf0, #fff3e0);
+  border: 2px solid #b8860b;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 16px rgba(184,134,11,0.15);
+}
+.ranking-section h3 {
+  text-align: center;
+  color: #8B0000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.3px;
+}
+.ranking-cards { display: flex; gap: 12px; flex-wrap: wrap; }
+.ranking-card {
+  flex: 1;
+  min-width: 180px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 2px solid #b8860b;
+  border-right: 2px solid #b8860b;
+}
+.ranking-card.top1 { border-left-color: #8B0000; }
+.ranking-card-label { font-size: 0.78rem; color: #888; font-weight: 500; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ranking-card-value { font-size: 1.05rem; font-weight: 700; color: #8B0000; line-height: 1.3; }
+.ranking-card-sub { font-size: 0.8rem; color: #999; margin-top: 3px; }
+.ranking-total { text-align: center; font-size: 0.85rem; color: #777; margin-top: 10px; }
+.ranking-note { margin-top: 12px; font-size: 0.8rem; color: #888; font-style: italic; text-align: center; line-height: 1.5; }
+.ranking-loading { text-align: center; color: #aaa; font-size: 0.9rem; padding: 8px 0; }
+.ranking-refresh-btn {
+  display: block;
+  margin: 10px auto 0;
+  padding: 5px 18px;
+  background: transparent;
+  border: 1.5px solid #b8860b;
+  color: #8B0000;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.ranking-refresh-btn:hover { background: #b8860b; color: #fff; }
+
+@media (max-width: 480px) {
+  .ranking-cards { flex-direction: column; }
+  .ranking-card { min-width: unset; }
+}
+
+.close-rules-btn {
+  display: block;
+  margin: 20px auto 5px auto;
+  padding: 8px 28px;
+  background: transparent;
+  color: #8B0000;
+  border: 2px solid #8B0000;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.close-rules-btn:hover { background: #8B0000; color: #fff; }
+
+/* MÀN HÌNH CHỌN BỘ ĐỀ (Phần I / II / III) */
+#part-select-section { display: none; }
+.part-select-intro {
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.part-choices {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.part-choice-btn {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border: 2px solid #b8860b;
+  background: #fff;
+  color: #8B0000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+.part-choice-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e53935, #ff7043, #ffb300);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255,112,67,0.35);
+}
+.part-choice-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.part-choice-sub { display: block; font-size: 0.85rem; font-weight: 400; margin-top: 4px; color: inherit; opacity: 0.85; }
+.part-select-back {
+  display: block;
+  margin: 15px auto 0;
+  background: transparent;
+  border: none;
+  color: #777;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.chapter-note {
+  color: #b71c1c;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  font-weight: 500;
+  background: #fff8f8;
+  padding: 5px 5px;
+  border-left: 3px solid #c62828;
+  border-right: 3px solid #c62828;
+  border-radius: 8px;
+  line-height: 1.4;
+}
+.footer {
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 15px 10px 10px;
+  color: #8B0000;
+  font-weight: 600;
+  margin-top: 25px;
+  position: relative;
+}
+.footer::before, .footer::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 2px;
+  background: #b8860b;
+  margin: 0 auto 6px;
+  border-radius: 2px;
+}
+.footer::after { margin: 6px auto 0; }
+
+/* KHUNG CÂU HỎI PHỤ */
+.extra-question-box {
+  max-width: 550px;
+  margin: 25px auto 15px auto;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #fdf8ee, #fff3d7);
+  border: 2px solid #b8860b;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.extra-question-box .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color: #8B0000 !important; }
+.extra-question-box input[type="number"] {
+  width: 180px;
+  padding: 14px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid #b8860b;
+  border-radius: 12px;
+  outline: none;
+  transition: 0.25s ease;
+}
+.extra-question-box input[type="number"]:focus {
+  border-color: #8B0000;
+  box-shadow: 0 0 0 4px rgba(139,0,0,0.15);
+}
+@media (max-width: 480px) {
+  .extra-question-box { padding: 18px; }
+  .extra-question-box input[type="number"] { width: 150px; font-size: 1.1rem; }
+}
+
+.timer-warning-text { font-size: 0.9rem; margin-top: 5px; color: #fff; font-weight: 400; }
+
+.logo {
+  text-align: center; /* canh giữa nội dung bên trong */
+}
+.logo img {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 10px;   /* canh giữa + giữ khoảng cách dưới */
+  display: block;        /* quan trọng: để margin auto hoạt động */
+  border-radius: 0;
+  background: none;
+  backdrop-filter: none;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5));
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="logo">
+  <img src="icon.png" alt="Logo">
+</div>
+  <header>
+    <h1>Hội thi trực tuyến<br>"Tìm hiểu công tác kiểm tra, giám sát của Đảng"</h1>
+    <p>ỦY BAN KIỂM TRA <br> ĐẢNG UỶ PHƯỜNG THANH KHÊ <br> THÀNH PHỐ ĐÀ NẴNG</p>
+  </header>
+
+  <!-- Thông báo thời gian thi -->
+  <div id="time-notification" class="time-notification">
+    <div id="time-message">Đang kiểm tra thời gian làm bài...</div>
+    <div id="countdown-container" class="countdown-container" style="display:none;">
+      <div id="countdown-title" class="countdown-title"></div>
+      <div id="countdown" class="countdown">
+        <div class="countdown-item"><div id="days" class="countdown-value">00</div><div class="countdown-label">Ngày</div></div>
+        <div class="countdown-item"><div id="hours" class="countdown-value">00</div><div class="countdown-label">Giờ</div></div>
+        <div class="countdown-item"><div id="minutes" class="countdown-value">00</div><div class="countdown-label">Phút</div></div>
+        <div class="countdown-item"><div id="seconds" class="countdown-value">00</div><div class="countdown-label">Giây</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nút bấm mở thể lệ -->
+<div class="the-le-link" onclick="openTheLeModal()">
+    <strong>Thể lệ dự thi</strong><br>
+    <small><i>Nhấn vào đây để xem chi tiết</i></small>
+</div>
+
+  <form id="quizForm">
+    <!-- Phần đăng ký thông tin -->
+    <div id="registration-section">
+      <h2>Thông tin thí sinh</h2>
+      <label for="fullname">Họ và tên <span style="color:red">*</span></label>
+      <input type="text" id="fullname" name="fullname" required placeholder="Nhập họ và tên đầy đủ">
+      <label for="phone">Số điện thoại <span style="color:red">*</span></label>
+      <input type="tel" id="phone" name="phone" required placeholder="Nhập số điện thoại liên hệ" pattern="[0-9]{10,11}">
+
+      <label for="chiboSearch">Chi bộ <span style="color:red">*</span></label>
+      <div class="combo-wrap">
+        <input type="text" id="chiboSearch" autocomplete="off" readonly
+               placeholder="Nhấn để chọn Chi bộ...">
+        <input type="hidden" id="chapter" name="chapter">
+      </div>
+      <div class="chapter-note">⚠️ Vui lòng <b>CHỌN CHI BỘ</b> từ danh sách (không tự gõ tên khác) để hệ thống chấm chính xác giải tập thể.</div>
+
+      <button type="button" class="btn" id="startBtn">Bắt đầu làm bài</button>
+    </div>
+
+    <!-- Chọn 1 trong 3 bộ đề (ẩn ban đầu) -->
+    <div id="part-select-section">
+      <h2>Chọn bộ đề dự thi</h2>
+      <p class="part-select-intro">Theo Thể lệ, Ban Tổ chức chuẩn bị 03 bộ đề, mỗi bộ đề gồm 40 câu. Vui lòng chọn <b>1 trong 3 bộ đề</b> dưới đây để bắt đầu làm bài. Thời gian làm bài sẽ được tính <b>từ lúc bạn chọn bộ đề</b> <br>(Thời gian tối đa 40 phút).</p>
+      <div class="part-choices">
+        <button type="button" class="part-choice-btn" data-phan="1">Phần I<span class="part-choice-sub">40 câu hỏi</span></button>
+        <button type="button" class="part-choice-btn" data-phan="2">Phần II<span class="part-choice-sub">40 câu hỏi</span></button>
+        <button type="button" class="part-choice-btn" data-phan="3">Phần III<span class="part-choice-sub">40 câu hỏi</span></button>
+      </div>
+      <button type="button" class="part-select-back" id="partSelectBackBtn">← Quay lại nhập thông tin</button>
+    </div>
+
+    <!-- Phần thi (ẩn ban đầu) -->
+    <div id="quiz-section">
+      <div class="test-timer">
+        ⏱️ Thời gian làm bài: <span id="timer-display">00:00</span>
+        <div id="timer-warning" class="timer-warning-text"></div>
+        <div id="time-progress" class="time-progress" style="width: 100%;"></div>
+      </div>
+      <h2 id="quiz-heading">Phần thi trắc nghiệm</h2>
+      <p style="color: red; text-align: center; font-weight: bold;">⚠️ Thời gian tối đa: 40 phút. Hết giờ sẽ tự động nộp bài!</p>
+      <div id="questions-list"></div>
+      <div class="extra-question-box">
+        <div class="question-text">
+          ✳️ <u><span class="cau-so">Câu hỏi phụ:</span></u><br>
+          Theo bạn, có bao nhiêu người tham gia cuộc thi này?
+        </div>
+        <input type="number" id="extra-answer" name="extra-answer" min="1" max="9999" placeholder="">
+      </div>
+      <button type="submit" class="btn" id="submitBtn"><span id="btnText">Nộp bài thi</span></button>
+    </div>
+  </form>
+
+  <div id="success-message">
+    <div class="success-icon">✅</div>
+    <h2 class="success-title">Đã gửi thành công!</h2>
+    <div class="success-text" id="resultText"></div>
+    <div id="wrong-answers-section" class="wrong-answers-section" style="display: none;">
+      <div class="wrong-answers-title">⚠️ Các câu chưa chính xác - Bạn cần tìm hiểu lại:</div>
+      <button id="show-wrong-btn" class="show-wrong-btn">👁️ Nhấn vào để xem chi tiết</button>
+      <div id="wrong-answers-list"></div>
+    </div>
+    <a href="#" class="back-button" id="backBtn">Quay lại trang chủ</a>
+  </div>
+
+  <div id="error-message">
+    <div class="error-icon">⚠️</div>
+    <h2 class="error-title">Không thể nộp bài</h2>
+    <div class="success-text" id="errorText"></div>
+    <a href="#" class="back-button" id="errorBackBtn">Quay lại</a>
+  </div>
+
+  <div id="timeout-message">
+    <div class="timeout-icon">⏰</div>
+    <h2 class="timeout-title">ĐÃ HẾT THỜI GIAN LÀM BÀI</h2>
+    <div class="success-text" id="timeoutText"></div>
+    <a href="#" class="back-button" id="timeoutBackBtn">Quay lại trang chủ</a>
+  </div>
+</div>
+
+<!-- ===== CỬA SỔ CHỌN CHI BỘ TOÀN MÀN HÌNH ===== -->
+<div id="chiboModal" class="chibo-modal" role="dialog" aria-modal="true" aria-label="Chọn Chi bộ">
+  <div class="chibo-modal-header">
+    <div class="chibo-modal-title">🗂️ Chọn Chi bộ</div>
+    <button type="button" class="chibo-modal-close" id="chiboModalClose" aria-label="Đóng">✕</button>
+  </div>
+  <div class="chibo-modal-search">
+    <input type="text" id="chiboModalSearch" autocomplete="off"
+           placeholder="🔍 Gõ để tìm nhanh Chi bộ...">
+  </div>
+  <div id="chiboModalList" class="chibo-modal-list"></div>
+</div>
+
+<script src="chibo.js"></script>
+<script>
+
+// ⚠️ THAY BẰNG URL APPS SCRIPT MỚI CỦA BẠN SAU KHI DEPLOY (deploy riêng cho app này)
+const SERVER_URL = 'https://script.google.com/macros/s/AKfycbwUjAi-21rfLvfc2v8AMo67h8Cl32DL-U0uPCsfd87tCnrvx_pv32YiDPoP418B9uPBZg/exec';
+
+// Thời gian tối đa làm bài: 40 phút = 2400 giây (đúng Điều 6.3 Thể lệ — 40 câu/bộ đề)
+const MAX_TIME_SECONDS = 40 * 60;
+let timeoutTimer = null;
+
+// ── Thời gian cuộc thi: 01/10/2026 - 06/10/2026 (Điều 6.1 Thể lệ) ──
+const EXAM_START = new Date('2026-10-01T00:00:00+07:00');
+const EXAM_END   = new Date('2026-10-06T23:59:59+07:00');
+
+function formatNgayGioVN(d) {
+  const p2 = (n) => String(n).padStart(2, '0');
+  return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()}, ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+}
+
+function _boDauTiengViet(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .toLowerCase();
+}
+
+// Danh sách phẳng toàn bộ tên chi bộ hợp lệ — dùng để kiểm tra (isValidChiBo)
+// và làm dự phòng nếu vì lý do gì đó chibo.js không có sẵn DS_NHOM.
+const _DS_CHI_BO_HOP_LE = (typeof DS_CHI_BO !== 'undefined' && DS_CHI_BO.length)
+  ? DS_CHI_BO
+  : (typeof DS_NHOM !== 'undefined' ? DS_NHOM.flatMap(n => n.danhSach) : []);
+
+function isValidChiBo(ten) {
+  return _DS_CHI_BO_HOP_LE.indexOf(String(ten || '').trim()) !== -1;
+}
+
+function initChiBoCombo({ inputId, hiddenId }) {
+  const input      = document.getElementById(inputId);
+  const hidden     = document.getElementById(hiddenId);
+  const modal      = document.getElementById('chiboModal');
+  const modalList  = document.getElementById('chiboModalList');
+  const modalSearch= document.getElementById('chiboModalSearch');
+  const modalClose = document.getElementById('chiboModalClose');
+  if (!input || !hidden || !modal) return;
+
+  const nhomList = (typeof DS_NHOM !== 'undefined') ? DS_NHOM : [];
+  let modalOpen = false;
+
+  function highlight(text, query) {
+    if (!query) return text;
+    const idx = _boDauTiengViet(text).indexOf(query);
+    if (idx === -1) return text;
+    return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + query.length) + '</mark>' + text.slice(idx + query.length);
+  }
+
+  // Chọn xong -> gán giá trị và TỰ ĐỘNG ĐÓNG cửa sổ
+  function chonChiBo(ten) {
+    input.value  = ten;
+    hidden.value = ten;
+    closeModal();
+  }
+
+  function render(queryRaw) {
+    const query = _boDauTiengViet((queryRaw || '').trim());
+    modalList.innerHTML = '';
+
+    let coKetQua = false;
+
+    nhomList.forEach((nhom) => {
+      const matched = nhom.danhSach.filter((ten) => !query || _boDauTiengViet(ten).indexOf(query) !== -1);
+      if (matched.length === 0) return;
+      coKetQua = true;
+
+      const header = document.createElement('div');
+      header.className = 'combo-group-header';
+      header.textContent = nhom.ten;
+      modalList.appendChild(header);
+
+      matched.forEach((ten) => {
+        const item = document.createElement('div');
+        item.className = 'combo-item combo-sub';
+        if (ten === hidden.value) item.classList.add('combo-selected');
+        item.innerHTML = highlight(ten, query);
+        item.addEventListener('click', () => chonChiBo(ten));
+        modalList.appendChild(item);
+      });
+    });
+
+    if (!coKetQua) {
+      const empty = document.createElement('div');
+      empty.className = 'combo-item combo-empty';
+      empty.textContent = 'Không tìm thấy Chi bộ phù hợp';
+      modalList.appendChild(empty);
+    }
+  }
+
+  function openModal() {
+    if (modalOpen) return;
+    modalOpen = true;
+    if (modalSearch) modalSearch.value = '';
+    render('');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { try { modalSearch && modalSearch.focus(); } catch (e) {} }, 120);
+  }
+
+  function closeModal() {
+    if (!modalOpen) return;
+    modalOpen = false;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    try { input.blur(); } catch (e) {}
+    if (modalSearch) modalSearch.blur();
+  }
+
+  // Mở cửa sổ khi nhấn / focus / Enter vào ô Chi bộ
+  input.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+  input.addEventListener('focus', () => openModal());
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+  });
+
+  // Nút đóng ✕
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+
+  // Ô tìm kiếm trong cửa sổ
+  if (modalSearch) {
+    modalSearch.addEventListener('input', () => render(modalSearch.value));
+  }
+
+  // Nhấn ESC để đóng
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOpen) closeModal();
+  });
+
+  // Bấm ra vùng trống (ngoài item) không đóng — chỉ đóng khi bấm nút ✕ hoặc chọn xong
+}
+
+// ================================================================
+// fetchWithTimeout: gọi fetch() nhưng KHÔNG BAO GIỜ bị "treo mãi mãi".
+// Nếu server không phản hồi trong "timeoutMs", request sẽ tự hủy và ném lỗi
+// rõ ràng để nơi gọi xử lý (thử lại / báo cho người dùng), thay vì spinner
+// quay vô hạn khi bấm "Bắt đầu làm bài" hoặc "Nộp bài".
+// ================================================================
+function fetchWithTimeout(url, options, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs || 20000);
+  return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+    .finally(() => clearTimeout(timer));
+}
+
+let currentSessionId = null;
+let currentBoDe = null;
+let questionMap = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Khởi tạo ô chọn/tìm kiếm Chi bộ (dữ liệu từ chibo.js)
+  initChiBoCombo({
+    inputId: 'chiboSearch',
+    hiddenId: 'chapter'
+  });
+
+  const registrationSection = document.getElementById('registration-section');
+  const partSelectSection = document.getElementById('part-select-section');
+  const quizSection = document.getElementById('quiz-section');
+  const startBtn = document.getElementById('startBtn');
+  const partSelectBackBtn = document.getElementById('partSelectBackBtn');
+  const partChoiceBtns = document.querySelectorAll('.part-choice-btn');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  const success = document.getElementById('success-message');
+  const errorMsg = document.getElementById('error-message');
+  const timeoutMsg = document.getElementById('timeout-message');
+  const backBtn = document.getElementById('backBtn');
+  const errorBackBtn = document.getElementById('errorBackBtn');
+  const timeoutBackBtn = document.getElementById('timeoutBackBtn');
+  const timeNotification = document.getElementById('time-notification');
+  const timeMessage = document.getElementById('time-message');
+  const countdownContainer = document.getElementById('countdown-container');
+  const countdownTitle = document.getElementById('countdown-title');
+  const daysElement = document.getElementById('days');
+  const hoursElement = document.getElementById('hours');
+  const minutesElement = document.getElementById('minutes');
+  const secondsElement = document.getElementById('seconds');
+  const timerDisplay = document.getElementById('timer-display');
+  const timerWarning = document.getElementById('timer-warning');
+  const timeProgress = document.getElementById('time-progress');
+  const qList = document.getElementById('questions-list');
+  const quizHeading = document.getElementById('quiz-heading');
+
+  const fullnameInput = document.getElementById('fullname');
+
+  function toUpperVietnamese(str) { return str.toLocaleUpperCase('vi-VN'); }
+
+  fullnameInput.addEventListener('input', function () {
+    const cursorPos = this.selectionStart;
+    this.value = toUpperVietnamese(this.value);
+    this.setSelectionRange(cursorPos, cursorPos);
+  });
+
+  let testStartTime = null;
+  let stopwatchInterval = null;
+  let elapsedSeconds = 0;
+  // Chống việc "Hết giờ tự nộp" và người dùng bấm "Nộp bài" thủ công xảy ra
+  // cùng lúc (race condition) — đây cũng là một nguyên nhân gây cảm giác
+  // "bị treo/loading mãi" vì 2 request gửi chồng lên nhau.
+  let isSubmitting = false;
+
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function thuThapDapAn() {
+    const answers = {};
+    const questionDivs = document.querySelectorAll('#questions-list .question');
+    questionDivs.forEach((qDiv) => {
+      const radios = qDiv.querySelectorAll('input[type="radio"]');
+      if (!radios.length) return;
+      const name = radios[0].name;
+      const selected = qDiv.querySelector(`input[name="${name}"]:checked`);
+      answers[name] = selected ? selected.value : '';
+    });
+    return answers;
+  }
+
+  function hienThiKetQua(target, score, total, timeTaken, wrongAnswers, isTimeout) {
+    const wrongAnswersSection = document.getElementById('wrong-answers-section');
+    const wrongAnswersList = document.getElementById('wrong-answers-list');
+    const showWrongBtn = document.getElementById('show-wrong-btn');
+
+    if (isTimeout) {
+      document.getElementById('timeoutText').innerHTML =
+        `⏰ <strong>ĐÃ HẾT THỜI GIAN LÀM BÀI!</strong><br><br>
+         Bạn đã trả lời đúng <strong>${score}/${total}</strong> câu hỏi chính.<br>
+         Thời gian làm bài: <strong>${timeTaken}</strong><br><br>
+         Kết quả đã được ghi nhận. Cảm ơn bạn đã tham gia cuộc thi!`;
+    } else {
+      document.getElementById('resultText').innerHTML =
+        `Bạn đã trả lời đúng <strong>${score}/${total}</strong> câu hỏi chính.<br>
+         Thời gian làm bài: <strong>${timeTaken}</strong><br><br>
+         Kết quả đã được ghi nhận. Cảm ơn bạn đã tham gia cuộc thi!`;
+    }
+
+    if (wrongAnswers && wrongAnswers.length > 0) {
+      wrongAnswersSection.style.display = 'block';
+      let wrongHTML = '';
+      wrongAnswers.forEach(item => {
+        const questionText = questionMap[item.questionId] || '';
+        wrongHTML += `
+          <div class="wrong-question-item">
+            ${questionText ? `<div class="wrong-question-text">📌 ${questionText}</div>` : ''}
+            <div class="wrong-answer-line user-wrong-answer">✗ Bạn đã chọn: ${item.userAnswer}</div>
+            <div class="wrong-answer-line correct-answer-line">Đáp án đúng: ${item.correctAnswer}</div>
+          </div>
+        `;
+      });
+      wrongAnswersList.innerHTML = wrongHTML;
+
+      showWrongBtn.onclick = function() {
+        if (wrongAnswersList.style.display === 'none' || wrongAnswersList.style.display === '') {
+          wrongAnswersList.style.display = 'block';
+          this.textContent = '🔼 Ẩn danh sách';
+        } else {
+          wrongAnswersList.style.display = 'none';
+          this.textContent = '👁️ Nhấn vào để xem chi tiết';
+        }
+      };
+    }
+  }
+
+  async function autoSubmitQuiz() {
+    if (isSubmitting) return; // đã có 1 lượt nộp (thủ công hoặc tự động) đang chạy
+    isSubmitting = true;
+
+    if (timeoutTimer) { clearTimeout(timeoutTimer); timeoutTimer = null; }
+    // Chốt thời gian làm bài NGAY LẬP TỨC khi hết giờ, trước khi làm bất cứ
+    // việc gì khác (kể cả trước khi gửi mạng) để không bị lệch vì gửi chậm.
+    const timeTaken = stopStopwatch();
+    const thoiGianNop = formatNgayGioVN(new Date());
+
+    const fullname = document.getElementById('fullname').value.trim().toLocaleUpperCase('vi-VN');
+    const phone = document.getElementById('phone').value.trim();
+    const chapter = document.getElementById('chapter').value.trim();
+    const _cauHoiPhuRaw = document.getElementById('extra-answer').value.trim();
+    const _cauHoiPhuNum = parseInt(_cauHoiPhuRaw, 10);
+    const cauHoiPhu = (!isNaN(_cauHoiPhuNum) && _cauHoiPhuNum > 0) ? _cauHoiPhuNum : 0;
+
+    if (!currentSessionId) {
+      alert('Phiên thi không hợp lệ. Vui lòng tải lại trang.');
+      isSubmitting = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    btnText.innerHTML = '<span class="loading-spinner"></span> Đang tự động nộp...';
+
+    const answers = thuThapDapAn();
+
+    try {
+      const payload = {
+        action: 'submitQuiz',
+        sessionId: currentSessionId,
+        hoTen: fullname,
+        soDienThoai: phone,
+        chiBo: chapter,
+        boDe: currentBoDe,
+        answers,
+        cauHoiPhu,
+        thoiGianLamBai: timeTaken,
+        thoiGianNop,
+        autoSubmit: true
+      };
+
+      const resp = await fetchWithTimeout(SERVER_URL, { method: 'POST', body: JSON.stringify(payload) }, 25000);
+      const serverResult = await resp.json();
+
+      if (serverResult.success) {
+        quizSection.style.display = 'none';
+        timeoutMsg.style.display = 'block';
+        hienThiKetQua(null, serverResult.score, serverResult.total, timeTaken, serverResult.wrongAnswers, true);
+      } else if (serverResult.error) {
+        quizSection.style.display = 'none';
+        errorMsg.style.display = 'block';
+        document.getElementById('errorText').innerHTML = serverResult.error;
+      }
+    } catch (err) {
+      console.error('Lỗi khi tự động nộp:', err);
+      const lyDo = (err.name === 'AbortError')
+        ? 'Máy chủ phản hồi quá chậm. Bài làm của bạn (đáp án + thời gian) vẫn đang được lưu, vui lòng bấm "Nộp bài" một lần nữa để thử gửi lại.'
+        : ('Có lỗi xảy ra khi tự động nộp bài. Vui lòng thử lại.\nLỗi: ' + err.message);
+      alert(lyDo);
+      // Mở lại nút để người dùng có thể tự bấm "Nộp bài" thử lại — nhờ cơ chế
+      // chống trùng theo phiên thi ở server, gửi lại sẽ KHÔNG bị báo nhầm
+      // "số điện thoại đã thi rồi" nếu lần gửi trước đó thực ra đã thành công.
+      submitBtn.disabled = false;
+      btnText.textContent = 'Nộp bài thi';
+    } finally {
+      isSubmitting = false;
+    }
+  }
+
+  function _beginStopwatchInterval() {
+    if (stopwatchInterval) clearInterval(stopwatchInterval);
+    if (timeoutTimer) clearTimeout(timeoutTimer);
+
+    const timerContainer = document.querySelector('.test-timer');
+    timerContainer.classList.remove('warning-5min', 'warning-1min');
+
+    stopwatchInterval = setInterval(() => {
+      elapsedSeconds++;
+      timerDisplay.textContent = formatTime(elapsedSeconds);
+
+      const percentLeft = Math.max(0, ((MAX_TIME_SECONDS - elapsedSeconds) / MAX_TIME_SECONDS) * 100);
+      timeProgress.style.width = percentLeft + '%';
+
+      if (elapsedSeconds === MAX_TIME_SECONDS - 5 * 60) {
+        timerContainer.classList.add('warning-5min');
+        timerWarning.textContent = '⚠️ CÒN 5 PHÚT!';
+        alert('⚠️ CÒN 5 PHÚT! Bạn hãy nhanh chóng hoàn thành bài thi.');
+      }
+
+      if (elapsedSeconds === MAX_TIME_SECONDS - 60) {
+        timerContainer.classList.remove('warning-5min');
+        timerContainer.classList.add('warning-1min');
+        timerWarning.textContent = '⚠️⚠️ CÒN 1 PHÚT! ⚠️⚠️';
+        alert('⏰ CÒN 1 PHÚT! Hãy kiểm tra lại bài thi trước khi hết giờ.');
+      }
+
+      if (elapsedSeconds >= MAX_TIME_SECONDS) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+        timerWarning.textContent = '⏰ HẾT GIỜ! ĐANG TỰ ĐỘNG NỘP BÀI...';
+        autoSubmitQuiz();
+      }
+    }, 1000);
+
+    // Dự phòng: nếu vì lý do gì đó setInterval bị trình duyệt tạm dừng (vd tab
+    // ẩn), timeout tuyệt đối này vẫn đảm bảo bài thi được tự nộp đúng hạn.
+    const giayConLai = Math.max(0, MAX_TIME_SECONDS - elapsedSeconds);
+    timeoutTimer = setTimeout(() => {
+      if (stopwatchInterval) autoSubmitQuiz();
+    }, giayConLai * 1000);
+  }
+
+  // Bắt đầu tính giờ làm bài từ đầu (0 giây) — dùng khi bắt đầu 1 lượt thi mới.
+  function startStopwatch() {
+    elapsedSeconds = 0;
+    timerDisplay.textContent = '00:00';
+    timerWarning.textContent = '';
+    timeProgress.style.width = '100%';
+    _beginStopwatchInterval();
+  }
+
+  // Tiếp tục đếm giờ từ mốc thời gian ĐÃ TRÔI QUA (không reset về 0) — dùng
+  // khi nộp bài bị lỗi/timeout và người chơi cần thử nộp lại: thời gian làm
+  // bài phải được giữ nguyên, không được tính lại từ đầu.
+  function resumeStopwatch() {
+    _beginStopwatchInterval();
+  }
+
+  function stopStopwatch() {
+    if (stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
+    if (timeoutTimer) { clearTimeout(timeoutTimer); timeoutTimer = null; }
+    const timerContainer = document.querySelector('.test-timer');
+    if (timerContainer) timerContainer.classList.remove('warning-5min', 'warning-1min');
+    return formatTime(elapsedSeconds);
+  }
+
+  function updateContestCountdown(targetTime, isBeforeStart) {
+    const now = new Date();
+    const timeRemaining = targetTime - now;
+    if (timeRemaining <= 0) {
+      clearInterval(window.contestCountdownInterval);
+      checkContestTime();
+      return;
+    }
+    const days  = Math.floor(timeRemaining / 86400000);
+    const hours = Math.floor((timeRemaining % 86400000) / 3600000);
+    const mins  = Math.floor((timeRemaining % 3600000) / 60000);
+    const secs  = Math.floor((timeRemaining % 60000) / 1000);
+    daysElement.textContent    = days.toString().padStart(2, '0');
+    hoursElement.textContent   = hours.toString().padStart(2, '0');
+    minutesElement.textContent = mins.toString().padStart(2, '0');
+    secondsElement.textContent = secs.toString().padStart(2, '0');
+    countdownTitle.textContent = isBeforeStart
+      ? '⏳ Còn lại đến khi bắt đầu cuộc thi:'
+      : '⏳ Còn lại đến khi kết thúc cuộc thi:';
+  }
+
+  function _dinhDangNgayGioHienThi(d) {
+    const p2 = (n) => String(n).padStart(2, '0');
+    return `${p2(d.getHours())}h${p2(d.getMinutes())} ngày ${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()}`;
+  }
+
+  function checkContestTime() {
+    const now = new Date();
+    if (window.contestCountdownInterval) clearInterval(window.contestCountdownInterval);
+
+    if (now < EXAM_START) {
+      timeMessage.innerHTML = `Cuộc thi chưa bắt đầu<br>Thời gian bắt đầu: ${_dinhDangNgayGioHienThi(EXAM_START)}`;
+      timeNotification.className = "time-notification before";
+      startBtn.disabled = true;
+      countdownContainer.style.display = 'block';
+      updateContestCountdown(EXAM_START, true);
+      window.contestCountdownInterval = setInterval(() => updateContestCountdown(EXAM_START, true), 1000);
+    } else if (now >= EXAM_START && now <= EXAM_END) {
+      timeMessage.innerHTML = `ĐANG DIỄN RA CUỘC THI<br>(Kết thúc lúc: ${_dinhDangNgayGioHienThi(EXAM_END)})`;
+      timeNotification.className = "time-notification active";
+      startBtn.disabled = false;
+      countdownContainer.style.display = 'block';
+      updateContestCountdown(EXAM_END, false);
+      window.contestCountdownInterval = setInterval(() => updateContestCountdown(EXAM_END, false), 1000);
+    } else {
+      timeMessage.innerHTML = `CUỘC THI ĐÃ KẾT THÚC<br>(Đã kết thúc lúc: ${_dinhDangNgayGioHienThi(EXAM_END)})`;
+      timeNotification.className = "time-notification after";
+      startBtn.disabled = true;
+      countdownContainer.style.display = 'none';
+    }
+  }
+
+  function renderQuestions(questions) {
+    qList.innerHTML = '';
+    questionMap = {};
+    questions.forEach((q, idx) => {
+      questionMap[q.id] = q.text;
+      const div = document.createElement('div');
+      div.className = 'question';
+
+      const qt = document.createElement('div');
+      qt.className = 'question-text';
+      qt.innerHTML = `✳️<u><span class="cau-so">Câu ${idx + 1}:</span></u> ${q.text}`;
+      div.appendChild(qt);
+
+      const opts = document.createElement('div');
+      opts.className = 'options';
+
+      q.options.forEach((opt) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'option';
+
+        const inp = document.createElement('input');
+        inp.type = 'radio';
+        inp.name = `q${q.id}`;
+        inp.value = opt;
+        inp.id = `q${q.id}_${opt.charAt(0)}`;
+
+        const lbl = document.createElement('label');
+        lbl.htmlFor = inp.id;
+        lbl.textContent = opt;
+
+        wrap.appendChild(inp);
+        wrap.appendChild(lbl);
+        opts.appendChild(wrap);
+      });
+
+      div.appendChild(opts);
+      qList.appendChild(div);
+    });
+
+    if (quizHeading) {
+      quizHeading.textContent = `${currentBoDe || 'Phần thi trắc nghiệm'} — ${questions.length} câu hỏi chính + 1 câu hỏi phụ`;
+    }
+  }
+
+  // Bước 1: Bấm "Bắt đầu làm bài" chỉ kiểm tra thông tin và CHUYỂN SANG màn
+  // hình chọn bộ đề (Phần I/II/III) — KHÔNG kiểm tra trùng số điện thoại,
+  // KHÔNG tải câu hỏi và KHÔNG tính giờ ở bước này.
+  startBtn.addEventListener('click', () => {
+    const fullname = document.getElementById('fullname').value.trim().toLocaleUpperCase('vi-VN');
+    const phone    = document.getElementById('phone').value.trim();
+    const chapter  = document.getElementById('chapter').value.trim();
+
+    if (!fullname || !phone || !chapter) {
+      alert('Vui lòng nhập đầy đủ thông tin và CHỌN Chi bộ từ danh sách!');
+      return;
+    }
+    if (typeof isValidChiBo === 'function' && !isValidChiBo(chapter)) {
+      alert('Chi bộ không hợp lệ. Vui lòng chọn lại từ danh sách.');
+      return;
+    }
+    if (!/^[0-9]{10,11}$/.test(phone)) {
+      alert('Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.');
+      return;
+    }
+
+    registrationSection.style.display = 'none';
+    partSelectSection.style.display = 'block';
+  });
+
+  partSelectBackBtn.addEventListener('click', () => {
+    partSelectSection.style.display = 'none';
+    registrationSection.style.display = 'block';
+  });
+
+  // Bước 2: Chọn 1 trong 3 bộ đề -> TẢI CÂU HỎI của đúng bộ đề đó và BẮT ĐẦU
+  // ĐẾM GIỜ (40 phút) NGAY TỪ LÚC NÀY.
+  partChoiceBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const phan = btn.dataset.phan;
+
+      partChoiceBtns.forEach((b) => { b.disabled = true; });
+      btn.textContent = '⏳ Đang tải câu hỏi...';
+
+      try {
+        const resp = await fetchWithTimeout(`${SERVER_URL}?action=getQuestions&phan=${encodeURIComponent(phan)}`, {}, 20000);
+        const data = await resp.json();
+
+        if (!data.success || !data.questions || data.questions.length === 0) {
+          throw new Error(data.error || 'Không tải được câu hỏi. Vui lòng thử lại.');
+        }
+
+        currentSessionId = data.sessionId;
+        currentBoDe = data.boDe || ('Phần ' + phan);
+        renderQuestions(data.questions);
+
+        partSelectSection.style.display = 'none';
+        quizSection.style.display = 'block';
+
+        testStartTime = new Date();
+        startStopwatch();
+
+      } catch (err) {
+        const lyDo = (err.name === 'AbortError')
+          ? 'Máy chủ phản hồi quá chậm khi tải câu hỏi. Vui lòng thử lại.'
+          : ('Lỗi: ' + err.message);
+        alert(lyDo);
+      } finally {
+        partChoiceBtns.forEach((b, i) => {
+          b.disabled = false;
+          b.innerHTML = `Phần ${['I','II','III'][i]}<span class="part-choice-sub">40 câu hỏi</span>`;
+        });
+      }
+    });
+  });
+
+  document.getElementById('quizForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting) return; // tránh bấm 2 lần / trùng với lượt tự nộp khi hết giờ
+    isSubmitting = true;
+
+    // Chốt thời gian làm bài VÀ thời điểm nộp bài NGAY KHI BẤM NÚT, trước khi
+    // gửi mạng — nhờ vậy dù mạng chậm/máy chủ xử lý lâu, thời gian ghi vào
+    // sheet vẫn chính xác theo lúc người chơi thực sự bấm nộp.
+    const timeTaken = stopStopwatch();
+    const thoiGianNop = formatNgayGioVN(new Date());
+
+    const fullname = document.getElementById('fullname').value.trim().toLocaleUpperCase('vi-VN');
+    const phone    = document.getElementById('phone').value.trim();
+    const chapter  = document.getElementById('chapter').value.trim();
+    const _cauHoiPhuRaw = document.getElementById('extra-answer').value.trim();
+    const _cauHoiPhuNum = parseInt(_cauHoiPhuRaw, 10);
+    const cauHoiPhu = (!isNaN(_cauHoiPhuNum) && _cauHoiPhuNum > 0) ? _cauHoiPhuNum : 0;
+
+    if (!currentSessionId) {
+      alert('Phiên thi không hợp lệ. Vui lòng tải lại trang.');
+      isSubmitting = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    btnText.innerHTML = '<span class="loading-spinner"></span> Đang gửi...';
+
+    const answers = thuThapDapAn();
+
+    try {
+      const payload = {
+        action: 'submitQuiz',
+        sessionId: currentSessionId,
+        hoTen: fullname,
+        soDienThoai: phone,
+        chiBo: chapter,
+        boDe: currentBoDe,
+        answers,
+        cauHoiPhu,
+        thoiGianLamBai: timeTaken,
+        thoiGianNop
+      };
+
+      let guiThanhCong = false;
+      let serverResult = null;
+      const MAX_RETRY = 3;
+
+      // Mỗi lần thử có TIMEOUT RIÊNG (không bao giờ treo vô hạn). Vì server đã
+      // được làm cho phản hồi nhanh (không xử lý xếp hạng đồng bộ trong lúc
+      // nộp bài) và có cơ chế chống trùng theo phiên thi, việc thử lại ở đây
+      // là AN TOÀN — sẽ không bị báo nhầm "số điện thoại đã thi rồi".
+      for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+        try {
+          btnText.innerHTML = `<span class="loading-spinner"></span> Đang gửi${attempt > 1 ? ' (lần ' + attempt + ')' : ''}...`;
+          const resp = await fetchWithTimeout(SERVER_URL, { method: 'POST', body: JSON.stringify(payload) }, 20000);
+          serverResult = await resp.json();
+          if (serverResult.success) { guiThanhCong = true; break; }
+          console.warn(`Lần ${attempt}: Server từ chối —`, serverResult.error);
+          break;
+        } catch (netErr) {
+          console.warn(`Lần ${attempt}: Lỗi mạng/timeout —`, netErr.message);
+          if (attempt < MAX_RETRY) await new Promise(r => setTimeout(r, 1500));
+        }
+      }
+
+      if (guiThanhCong && serverResult) {
+        quizSection.style.display = 'none';
+        success.style.display = 'block';
+        hienThiKetQua(null, serverResult.score, serverResult.total, timeTaken, serverResult.wrongAnswers, false);
+      } else if (serverResult && serverResult.error) {
+        quizSection.style.display = 'none';
+        errorMsg.style.display = 'block';
+        document.getElementById('errorText').innerHTML = serverResult.error;
+      } else {
+        throw new Error('Không thể gửi dữ liệu. Máy chủ phản hồi quá chậm hoặc mất kết nối mạng. Bài làm của bạn chưa mất — vui lòng bấm "Nộp bài" để thử lại.');
+      }
+
+    } catch (err) {
+      console.error('Lỗi khi gửi:', err);
+      alert(err.message || 'Có lỗi xảy ra khi gửi bài. Vui lòng thử lại.');
+      submitBtn.disabled = false;
+      btnText.textContent = 'Nộp bài thi';
+      if (!stopwatchInterval) resumeStopwatch();
+    } finally {
+      isSubmitting = false;
+    }
+  });
+
+  function resetToRegistration() {
+    success.style.display = 'none';
+    errorMsg.style.display = 'none';
+    timeoutMsg.style.display = 'none';
+    registrationSection.style.display = 'block';
+    partSelectSection.style.display = 'none';
+    quizSection.style.display = 'none';
+    document.getElementById('quizForm').reset();
+    document.getElementById('chiboSearch').value = '';
+    document.getElementById('chapter').value = '';
+    submitBtn.disabled = false;
+    btnText.textContent = 'Nộp bài thi';
+    startBtn.disabled = false;
+    startBtn.textContent = 'Bắt đầu làm bài';
+    partChoiceBtns.forEach((b, i) => {
+      b.disabled = false;
+      b.innerHTML = `Phần ${['I','II','III'][i]}<span class="part-choice-sub">40 câu hỏi</span>`;
+    });
+    timerDisplay.textContent = '00:00';
+    timerWarning.textContent = '';
+    elapsedSeconds = 0;
+    currentSessionId = null;
+    currentBoDe = null;
+    isSubmitting = false;
+
+    const timerContainer = document.querySelector('.test-timer');
+    if (timerContainer) timerContainer.classList.remove('warning-5min', 'warning-1min');
+    timeProgress.style.width = '100%';
+
+    const wrongAnswersSection = document.getElementById('wrong-answers-section');
+    const wrongAnswersList = document.getElementById('wrong-answers-list');
+    const showWrongBtn = document.getElementById('show-wrong-btn');
+    wrongAnswersSection.style.display = 'none';
+    wrongAnswersList.style.display = 'none';
+    wrongAnswersList.innerHTML = '';
+    showWrongBtn.textContent = '👁️ Nhấn vào để xem chi tiết';
+
+    if (stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
+    if (timeoutTimer) { clearTimeout(timeoutTimer); timeoutTimer = null; }
+  }
+
+  backBtn.addEventListener('click', (e) => { e.preventDefault(); resetToRegistration(); });
+  errorBackBtn.addEventListener('click', (e) => { e.preventDefault(); resetToRegistration(); });
+  timeoutBackBtn.addEventListener('click', (e) => { e.preventDefault(); resetToRegistration(); });
+
+  const closeRulesBtn = document.getElementById('closeRulesBtn');
+  const rulesDetails = document.querySelector('.rules-section details');
+  if (closeRulesBtn && rulesDetails) {
+    closeRulesBtn.addEventListener('click', () => {
+      rulesDetails.removeAttribute('open');
+      rulesDetails.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  checkContestTime();
+  setInterval(checkContestTime, 60000);
+});
+</script>
+
+<footer class="footer">
+  <p>ỦY BAN KIỂM TRA ĐẢNG ỦY PHƯỜNG THANH KHÊ <br> THÀNH PHỐ ĐÀ NẴNG</p>
+</footer>
+</div>
+<!-- Nhúng file thể lệ -->
+<script src="thele.js"></script>
+</body>
+</html>
