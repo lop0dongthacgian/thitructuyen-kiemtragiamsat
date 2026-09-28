@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🔥 Tool Test App Thi + Gửi Thử Bài</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #1a1a2e; color: #eee; padding: 20px; min-height: 100vh;
+  }
+  .container { max-width: 1000px; margin: auto; }
+  h1 { color: #ff6b6b; text-align: center; margin-bottom: 6px; font-size: 1.6rem; }
+  .subtitle { text-align: center; color: #8a8aa3; font-size: 0.8rem; margin-bottom: 18px; }
+
+  .info-box {
+    background: #4ecdc422; border: 1px solid #4ecdc4; color: #bdf5f0;
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 15px; font-size: 0.8rem; line-height: 1.5;
+  }
+  .info-box code { background: #0f3460; padding: 1px 5px; border-radius: 3px; }
+
+  .config { background: #16213e; padding: 18px; border-radius: 10px; margin-bottom: 15px; }
+  .config label {
+    display: block; margin: 10px 0 4px; color: #4ecdc4;
+    font-weight: 600; font-size: 0.85rem;
+  }
+  .config input, .config select {
+    width: 100%; padding: 10px; background: #0f3460;
+    border: 1px solid #4ecdc4; color: #eee; border-radius: 6px; font-size: 0.9rem;
+    font-family: inherit;
+  }
+  .url-row { display: flex; gap: 8px; align-items: stretch; }
+  .url-row input { flex: 1; }
+  .btn-ping {
+    padding: 0 16px; border: none; border-radius: 6px; background: #3498db; color: #fff;
+    font-weight: 700; cursor: pointer; font-size: 0.85rem; white-space: nowrap;
+  }
+  .btn-ping:hover:not(:disabled) { background: #2980b9; }
+  .btn-ping:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .ping-result { margin-top: 8px; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; display: none; }
+  .ping-result.show { display: block; }
+  .ping-result.ok   { background: #2ecc7122; border: 1px solid #2ecc71; color: #a8f0c6; }
+  .ping-result.fail { background: #e74c3c22; border: 1px solid #e74c3c; color: #ffb3b3; }
+
+  /* Section headings */
+  .section-title {
+    color: #ff6b6b; font-size: 1rem; font-weight: 700;
+    margin: 22px 0 10px; padding-bottom: 6px;
+    border-bottom: 2px solid #ff6b6b44;
+    text-align: center;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* Single submit form */
+  .single-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  @media (max-width: 600px) { .single-grid { grid-template-columns: 1fr; } }
+
+  .check-row {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    font-size: 0.85rem; color: #bdf5f0; cursor: pointer;
+  }
+  .check-row input[type="checkbox"] {
+    width: auto; padding: 0; margin: 0; cursor: pointer;
+  }
+
+  .btn-group { display: flex; gap: 8px; margin-top: 14px; }
+  .btn-submit {
+    flex: 1; padding: 12px; border: none; border-radius: 8px;
+    background: #4ecdc4; color: #1a1a2e; font-weight: 700; cursor: pointer; font-size: 0.95rem;
+  }
+  .btn-submit:hover:not(:disabled) { background: #45b7af; }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-random {
+    flex: 0 0 130px; padding: 12px; border: none; border-radius: 8px;
+    background: #34495e; color: #fff; font-weight: 700; cursor: pointer; font-size: 0.9rem;
+  }
+  .btn-random:hover:not(:disabled) { background: #2c3e50; }
+  .btn-random:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Batch presets */
+  .preset-group {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px;
+  }
+  @media (max-width: 600px) { .preset-group { grid-template-columns: repeat(2, 1fr); } }
+  .btn-preset {
+    padding: 12px 8px; border: none; border-radius: 8px;
+    font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
+    color: #1a1a2e;
+  }
+  .btn-preset.fast   { background: #4ecdc4; }
+  .btn-preset.medium { background: #45b7af; }
+  .btn-preset.heavy  { background: #f39c12; }
+  .btn-preset.stress { background: #e74c3c; color: #fff; }
+  .btn-preset:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.9; }
+  .btn-preset:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-preset small { display: block; font-size: 0.7rem; font-weight: 400; opacity: 0.8; margin-top: 2px; }
+
+  .btn-stop, .btn-reset, .btn-export {
+    flex: 1; padding: 10px; border: none; border-radius: 8px;
+    font-weight: 700; cursor: pointer; font-size: 0.9rem;
+  }
+  .btn-stop  { background: #ff6b6b; color: #fff; }
+  .btn-reset { background: #95a5a6; color: #fff; }
+  .btn-export { background: #34495e; color: #fff; }
+  .btn-stop:disabled, .btn-reset:disabled, .btn-export:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .advanced-toggle {
+    margin-top: 14px; color: #4ecdc4; cursor: pointer;
+    font-size: 0.85rem; user-select: none; text-align: center;
+  }
+  .advanced-content { display: none; margin-top: 10px; }
+  .advanced-content.open { display: block; }
+  .adv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 600px) { .adv-grid { grid-template-columns: 1fr; } }
+  .adv-hint { font-size: 0.7rem; color: #8a8aa3; margin-top: 3px; }
+
+  /* Result banner */
+  .result-banner {
+    display: none; padding: 16px; border-radius: 10px; margin-bottom: 15px;
+    text-align: center; font-size: 1rem; font-weight: 700;
+  }
+  .result-banner.show { display: block; }
+  .result-banner.success { background: #2ecc7133; border: 2px solid #2ecc71; color: #a8f0c6; }
+  .result-banner.warn    { background: #f39c1233; border: 2px solid #f39c12; color: #ffe0a8; }
+  .result-banner.fail    { background: #e74c3c33; border: 2px solid #e74c3c; color: #ffb3b3; }
+  .result-banner .big { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+  .result-banner .detail { font-weight: 400; font-size: 0.8rem; opacity: 0.9; margin-top: 6px; }
+
+  /* Stats */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px; margin: 12px 0;
+  }
+  .stat-card {
+    background: #16213e; padding: 10px; border-radius: 8px;
+    text-align: center; border-left: 2px solid #4ecdc4; border-right: 2px solid #4ecdc4;
+  }
+  .stat-card.success { border-left-color: #2ecc71; border-right-color: #2ecc71; }
+  .stat-card.error   { border-left-color: #e74c3c; border-right-color: #e74c3c; }
+  .stat-card.retry   { border-left-color: #f39c12; border-right-color: #f39c12; }
+  .stat-card.pending { border-left-color: #3498db; border-right-color: #3498db; }
+  .stat-value { font-size: 1.6rem; font-weight: 800; color: #fff; }
+  .stat-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-top: 3px; }
+
+  .progress-bar {
+    width: 100%; height: 22px; background: #0f3460;
+    border-radius: 11px; overflow: hidden; margin: 10px 0; position: relative;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, #4ecdc4, #45b7af);
+    transition: width 0.3s; width: 0%;
+  }
+  .progress-fill.err-mix { background: linear-gradient(90deg, #4ecdc4, #f39c12); }
+  .progress-text {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); font-weight: 700;
+    font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  }
+
+  .log-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .log-toolbar span { font-size: 0.75rem; color: #8a8aa3; }
+  .log {
+    background: #0f3460; border-radius: 8px; padding: 12px;
+    height: 260px; overflow-y: auto;
+    font-family: 'Courier New', monospace; font-size: 0.75rem; line-height: 1.4;
+  }
+  .log-entry { margin-bottom: 2px; word-break: break-word; }
+  .log-info    { color: #4ecdc4; }
+  .log-success { color: #2ecc71; }
+  .log-error   { color: #e74c3c; }
+  .log-warn    { color: #f39c12; }
+
+  .phase-indicator {
+    display: block; width: 100%; padding: 6px 10px;
+    background: transparent; color: #eee;
+    border: 1px solid #4ecdc4; border-radius: 6px;
+    font-weight: 700; font-size: 0.8rem; text-align: center; margin-bottom: 8px;
+  }
+  .phase-indicator.done  { border-color: #2ecc71; color: #2ecc71; }
+  .phase-indicator.idle  { border-color: #95a5a6; color: #ccc; }
+  .phase-indicator.error { border-color: #e74c3c; color: #e74c3c; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔥 TOOL TEST APP THI 🔥</h1>
+  <p class="subtitle">
+    Gửi thử 1 bài <b>+</b> Test tải hàng loạt (10 / 100 / 500 / 1000 bài)
+  </p>
+
+  <div class="info-box">
+    ℹ️ <b>Cách hoạt động:</b>
+    <ul style="margin: 6px 0 0 18px; padding: 0;">
+      <li><code>thoiGianLamBai</code> gửi lên là <b>SỐ NGUYÊN GIÂY</b> (không phải "MM:SS").</li>
+      <li>Server <b>không</b> trả <code>correctAnswer</code> → tool chọn đáp án ngẫu nhiên.</li>
+      <li>Server dùng <b>HMAC token</b> (không còn "session hết hạn" khi tải cao).</li>
+      <li>Batch size tối đa <b>30</b> (giới hạn quota Apps Script).</li>
+      <li>Chi bộ dùng tên thật trong <code>chibo.gs</code> để tránh log warning.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== CONFIG CHUNG ============================== -->
+  <div class="config">
+    <label>🔗 SERVER_URL (Apps Script /exec):</label>
+    <div class="url-row">
+      <input type="text" id="serverUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn-ping" id="btnPing" onclick="pingServer()">📡 Kiểm tra</button>
+    </div>
+    <div class="ping-result" id="pingResult"></div>
+  </div>
+
+  <!-- ============================== GỬI THỬ 1 BÀI ============================== -->
+  <div class="config">
+    <div class="section-title">📝 GỬI THỬ 1 BÀI</div>
+
+    <div class="single-grid">
+      <div>
+        <label>🗂️ Bộ đề:</label>
+        <select id="singleBoDe">
+          <option value="1">Bộ đề số 1</option>
+          <option value="2">Bộ đề số 2</option>
+          <option value="3">Bộ đề số 3</option>
+        </select>
+      </div>
+      <div>
+        <label>👤 Họ tên:</label>
+        <input type="text" id="singleHoTen" value="NGUYEN VAN AN">
+      </div>
+      <div>
+        <label>🎂 Năm sinh:</label>
+        <input type="number" id="singleNamSinh" value="1995" min="1900" max="2020">
+      </div>
+      <div>
+        <label>🏛️ Chi bộ:</label>
+        <input type="text" id="singleChiBo" list="dsChiBo" value="Chi bộ Văn phòng Đảng ủy phường">
+        <datalist id="dsChiBo"></datalist>
+      </div>
+      <div>
+        <label>❓ Câu hỏi phụ (100–9999):</label>
+        <input type="number" id="singleCauHoiPhu" value="1234" min="100" max="9999">
+      </div>
+      <div>
+        <label>⏱️ Thời gian làm bài (giây):</label>
+        <input type="number" id="singleThoiGianLamBai" value="900" min="1" max="7200">
+      </div>
+    </div>
+
+    <label class="check-row">
+      <input type="checkbox" id="singleAutoSubmit">
+      <span>Mô phỏng hết giờ (gắn cờ <code>autoSubmit: true</code>)</span>
+    </label>
+
+    <div class="btn-group">
+      <button class="btn-submit" id="btnSingleSubmit" onclick="submitSingleTrial()">🚀 GỬI THỬ BÀI</button>
+      <button class="btn-random" id="btnSingleRandom" onclick="fillRandomSingle()">🎲 Random</button>
+    </div>
+  </div>
+
+  <!-- ============================== TEST TẢI HÀNG LOẠT ============================== -->
+  <div class="config">
+    <div class="section-title">⚡ TEST TẢI HÀNG LOẠT</div>
+
+    <div class="preset-group">
+      <button class="btn-preset fast"   onclick="runPreset(10, 5, 100, 70)">
+        🚀 Test nhanh<small>10 bài</small>
+      </button>
+      <button class="btn-preset medium" onclick="runPreset(100, 10, 100, 70)">
+        📊 Test vừa<small>100 bài</small>
+      </button>
+      <button class="btn-preset heavy"  onclick="runPreset(500, 20, 150, 70)">
+        🔥 Test nặng<small>500 bài</small>
+      </button>
+      <button class="btn-preset stress" onclick="runPreset(1000, 30, 200, 70)">
+        💥 Siêu tải<small>1000 bài</small>
+      </button>
+    </div>
+
+    <div class="advanced-toggle" onclick="toggleAdvanced()">
+      ▸ <span id="advToggleText">Tùy chỉnh nâng cao</span>
+    </div>
+    <div class="advanced-content" id="advancedContent">
+      <div class="adv-grid">
+        <div>
+          <label>Số bài:</label>
+          <input type="number" id="totalTests" value="50" min="1" max="5000">
+        </div>
+        <div>
+          <label>Batch size (cùng lúc):</label>
+          <input type="number" id="batchSize" value="10" min="1" max="30">
+          <div class="adv-hint">Tối đa 30 — giới hạn thực thi đồng thời của Apps Script</div>
+        </div>
+        <div>
+          <label>Delay giữa batch (ms):</label>
+          <input type="number" id="batchDelay" value="100" min="0" max="10000">
+        </div>
+        <div>
+          <label>Phần trăm chọn đáp án đúng (giả lập):</label>
+          <input type="number" id="correctRate" value="70" min="0" max="100">
+          <div class="adv-hint">Chỉ mang tính giả lập — server chấm điểm thật</div>
+        </div>
+        <div>
+          <label>Timeout mỗi request (ms):</label>
+          <input type="number" id="requestTimeout" value="30000" min="5000" max="120000">
+        </div>
+        <div>
+          <label>Mô phỏng hết giờ (autoSubmit):</label>
+          <select id="autoSubmitMode">
+            <option value="off">Không — nộp thủ công (mặc định)</option>
+            <option value="on">Có — gắn cờ autoSubmit: true</option>
+            <option value="mix">Trộn 50/50 thủ công + tự động</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-stop"   id="btnStop"   disabled onclick="stopTest()">⏹️ DỪNG</button>
+      <button class="btn-reset"  id="btnReset"  onclick="resetTest()">🔄 RESET</button>
+      <button class="btn-export" id="btnExport" onclick="exportLog()">💾 XUẤT LOG</button>
+    </div>
+  </div>
+
+  <!-- ============================== TRẠNG THÁI ============================== -->
+  <div>
+    <span class="phase-indicator idle" id="phaseIndicator">⏸️ CHỜ</span>
+  </div>
+
+  <div class="result-banner" id="resultBanner"></div>
+
+  <div class="stats">
+    <div class="stat-card pending"><div class="stat-value" id="statSession">0</div><div class="stat-label">Session</div></div>
+    <div class="stat-card success"><div class="stat-value" id="statSuccess">0</div><div class="stat-label">✅ OK</div></div>
+    <div class="stat-card retry"><div class="stat-value" id="statRetry">0</div><div class="stat-label">🔁 Retry</div></div>
+    <div class="stat-card error"><div class="stat-value" id="statError">0</div><div class="stat-label">❌ Lỗi</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAvgTime">0</div><div class="stat-label">⏱️ TB (ms)</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAvgScore">0</div><div class="stat-label">🎯 Điểm TB</div></div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-text" id="progressText">0 / 0</div>
+  </div>
+
+  <div class="log-toolbar">
+    <span>📜 Nhật ký chi tiết</span>
+    <span id="logCount">0 dòng</span>
+  </div>
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+// ============================================================
+// DỮ LIỆU GIẢ LẬP
+// ============================================================
+const DS_TEN = [
+  'NGUYEN VAN AN','NGUYEN VAN BAO','NGUYEN VAN BICH','NGUYEN VAN CHAU',
+  'NGUYEN VAN CUONG','NGUYEN VAN DAT','NGUYEN VAN DIEU','NGUYEN VAN EM',
+  'NGUYEN VAN PHUONG','NGUYEN VAN GIAP','NGUYEN VAN HANH','NGUYEN VAN KHANH',
+  'NGUYEN VAN LAN','NGUYEN VAN MINH','NGUYEN VAN NGOC','NGUYEN VAN PHONG',
+  'NGUYEN VAN QUI','NGUYEN VAN SON','NGUYEN VAN TAM','NGUYEN VAN UN',
+  'NGUYEN VAN VAN','NGUYEN VAN XUAN','NGUYEN VAN YEN','NGUYEN VAN ZION',
+  'NGUYEN VAN HOA','NGUYEN VAN IU',
+  'NGUYEN THI AN','NGUYEN THI BAO','NGUYEN THI BICH','NGUYEN THI CHAU',
+  'NGUYEN THI CUONG','NGUYEN THI DAT','NGUYEN THI DIEU','NGUYEN THI EM',
+  'NGUYEN THI PHUONG','NGUYEN THI GIAP','NGUYEN THI HANH','NGUYEN THI KHANH',
+  'NGUYEN THI LAN','NGUYEN THI MINH','NGUYEN THI NGOC','NGUYEN THI PHONG',
+  'NGUYEN THI QUI','NGUYEN THI SON','NGUYEN THI TAM','NGUYEN THI UN',
+  'NGUYEN THI VAN','NGUYEN THI XUAN','NGUYEN THI YEN','NGUYEN THI ZION',
+  'NGUYEN THI HOA','NGUYEN THI IU',
+  'TRAN VAN AN','TRAN VAN BAO','TRAN VAN BICH','TRAN VAN CHAU',
+  'TRAN VAN CUONG','TRAN VAN DAT','TRAN VAN DIEU','TRAN VAN EM',
+  'TRAN VAN PHUONG','TRAN VAN GIAP','TRAN VAN HANH','TRAN VAN KHANH',
+  'TRAN VAN LAN','TRAN VAN MINH','TRAN VAN NGOC','TRAN VAN PHONG',
+  'TRAN VAN QUI','TRAN VAN SON','TRAN VAN TAM','TRAN VAN UN',
+  'TRAN VAN VAN','TRAN VAN XUAN','TRAN VAN YEN','TRAN VAN ZION',
+  'TRAN VAN HOA','TRAN VAN IU',
+  'TRAN THI AN','TRAN THI BAO','TRAN THI BICH','TRAN THI CHAU',
+  'TRAN THI CUONG','TRAN THI DAT','TRAN THI DIEU','TRAN THI EM',
+  'TRAN THI PHUONG','TRAN THI GIAP','TRAN THI HANH','TRAN THI KHANH',
+  'TRAN THI LAN','TRAN THI MINH','TRAN THI NGOC','TRAN THI PHONG',
+  'TRAN THI QUI','TRAN THI SON','TRAN THI TAM','TRAN THI UN',
+  'TRAN THI VAN','TRAN THI XUAN','TRAN THI YEN','TRAN THI ZION',
+  'TRAN THI HOA','TRAN THI IU',
+  'LE VAN AN','LE VAN BAO','LE VAN BICH','LE VAN CHAU',
+  'LE VAN CUONG','LE VAN DAT','LE VAN DIEU','LE VAN EM',
+  'LE VAN PHUONG','LE VAN GIAP','LE VAN HANH','LE VAN KHANH',
+  'LE VAN LAN','LE VAN MINH','LE VAN NGOC','LE VAN PHONG',
+  'LE VAN QUI','LE VAN SON','LE VAN TAM','LE VAN UN',
+  'LE VAN VAN','LE VAN XUAN','LE VAN YEN','LE VAN ZION',
+  'LE VAN HOA','LE VAN IU',
+  'LE THI AN','LE THI BAO','LE THI BICH','LE THI CHAU',
+  'LE THI CUONG','LE THI DAT','LE THI DIEU','LE THI EM',
+  'LE THI PHUONG','LE THI GIAP','LE THI HANH','LE THI KHANH',
+  'LE THI LAN','LE THI MINH','LE THI NGOC','LE THI PHONG',
+  'LE THI QUI','LE THI SON','LE THI TAM','LE THI UN',
+  'LE THI VAN','LE THI XUAN','LE THI YEN','LE THI ZION',
+  'LE THI HOA','LE THI IU',
+  'PHAM VAN AN','PHAM VAN BAO','PHAM VAN BICH','PHAM VAN CHAU',
+  'PHAM VAN CUONG','PHAM VAN DAT','PHAM VAN DIEU','PHAM VAN EM',
+  'PHAM VAN PHUONG','PHAM VAN GIAP','PHAM VAN HANH','PHAM VAN KHANH',
+  'PHAM VAN LAN','PHAM VAN MINH','PHAM VAN NGOC','PHAM VAN PHONG',
+  'PHAM VAN QUI','PHAM VAN SON','PHAM VAN TAM','PHAM VAN UN',
+  'PHAM VAN VAN','PHAM VAN XUAN','PHAM VAN YEN','PHAM VAN ZION',
+  'PHAM VAN HOA','PHAM VAN IU',
+  'PHAM THI AN','PHAM THI BAO','PHAM THI BICH','PHAM THI CHAU',
+  'PHAM THI CUONG','PHAM THI DAT','PHAM THI DIEU','PHAM THI EM',
+  'PHAM THI PHUONG','PHAM THI GIAP','PHAM THI HANH','PHAM THI KHANH',
+  'PHAM THI LAN','PHAM THI MINH','PHAM THI NGOC','PHAM THI PHONG',
+  'PHAM THI QUI','PHAM THI SON','PHAM THI TAM','PHAM THI UN',
+  'PHAM THI VAN','PHAM THI XUAN','PHAM THI YEN','PHAM THI ZION',
+  'PHAM THI HOA','PHAM THI IU',
+  'HOANG VAN AN','HOANG VAN BAO','HOANG VAN BICH','HOANG VAN CHAU',
+  'HOANG VAN CUONG','HOANG VAN DAT','HOANG VAN DIEU','HOANG VAN EM',
+  'HOANG VAN PHUONG','HOANG VAN GIAP','HOANG VAN HANH','HOANG VAN KHANH',
+  'HOANG VAN LAN','HOANG VAN MINH','HOANG VAN NGOC','HOANG VAN PHONG',
+  'HOANG VAN QUI','HOANG VAN SON','HOANG VAN TAM','HOANG VAN UN',
+  'HOANG VAN VAN','HOANG VAN XUAN','HOANG VAN YEN','HOANG VAN ZION',
+  'HOANG VAN HOA','HOANG VAN IU',
+  'HOANG THI AN','HOANG THI BAO','HOANG THI BICH','HOANG THI CHAU',
+  'HOANG THI CUONG','HOANG THI DAT','HOANG THI DIEU','HOANG THI EM',
+  'HOANG THI PHUONG','HOANG THI GIAP','HOANG THI HANH','HOANG THI KHANH',
+  'HOANG THI LAN','HOANG THI MINH','HOANG THI NGOC','HOANG THI PHONG',
+  'HOANG THI QUI','HOANG THI SON','HOANG THI TAM','HOANG THI UN',
+  'HOANG THI VAN','HOANG THI XUAN','HOANG THI YEN','HOANG THI ZION',
+  'HOANG THI HOA','HOANG THI IU',
+  'HUYNH VAN AN','HUYNH VAN BAO','HUYNH VAN BICH','HUYNH VAN CHAU',
+  'HUYNH VAN CUONG','HUYNH VAN DAT','HUYNH VAN DIEU','HUYNH VAN EM',
+  'HUYNH VAN PHUONG','HUYNH VAN GIAP','HUYNH VAN HANH','HUYNH VAN KHANH',
+  'HUYNH VAN LAN','HUYNH VAN MINH','HUYNH VAN NGOC','HUYNH VAN PHONG',
+  'HUYNH VAN QUI','HUYNH VAN SON','HUYNH VAN TAM','HUYNH VAN UN',
+  'HUYNH VAN VAN','HUYNH VAN XUAN','HUYNH VAN YEN','HUYNH VAN ZION',
+  'HUYNH VAN HOA','HUYNH VAN IU',
+  'HUYNH THI AN','HUYNH THI BAO','HUYNH THI BICH','HUYNH THI CHAU',
+  'HUYNH THI CUONG','HUYNH THI DAT','HUYNH THI DIEU','HUYNH THI EM',
+  'HUYNH THI PHUONG','HUYNH THI GIAP','HUYNH THI HANH','HUYNH THI KHANH',
+  'HUYNH THI LAN','HUYNH THI MINH','HUYNH THI NGOC','HUYNH THI PHONG',
+  'HUYNH THI QUI','HUYNH THI SON','HUYNH THI TAM','HUYNH THI UN',
+  'HUYNH THI VAN','HUYNH THI XUAN','HUYNH THI YEN','HUYNH THI ZION',
+  'HUYNH THI HOA','HUYNH THI IU',
+  'PHAN VAN AN','PHAN VAN BAO','PHAN VAN BICH','PHAN VAN CHAU',
+  'PHAN VAN CUONG','PHAN VAN DAT','PHAN VAN DIEU','PHAN VAN EM',
+  'PHAN VAN PHUONG','PHAN VAN GIAP','PHAN VAN HANH','PHAN VAN KHANH',
+  'PHAN VAN LAN','PHAN VAN MINH','PHAN VAN NGOC','PHAN VAN PHONG',
+  'PHAN VAN QUI','PHAN VAN SON','PHAN VAN TAM','PHAN VAN UN',
+  'PHAN VAN VAN','PHAN VAN XUAN','PHAN VAN YEN','PHAN VAN ZION',
+  'PHAN VAN HOA','PHAN VAN IU',
+  'PHAN THI AN','PHAN THI BAO','PHAN THI BICH','PHAN THI CHAU',
+  'PHAN THI CUONG','PHAN THI DAT','PHAN THI DIEU','PHAN THI EM',
+  'PHAN THI PHUONG','PHAN THI GIAP','PHAN THI HANH','PHAN THI KHANH',
+  'PHAN THI LAN','PHAN THI MINH','PHAN THI NGOC','PHAN THI PHONG',
+  'PHAN THI QUI','PHAN THI SON','PHAN THI TAM','PHAN THI UN',
+  'PHAN THI VAN','PHAN THI XUAN','PHAN THI YEN','PHAN THI ZION',
+  'PHAN THI HOA','PHAN THI IU',
+  'VU VAN AN','VU VAN BAO','VU VAN BICH','VU VAN CHAU',
+  'VU VAN CUONG','VU VAN DAT','VU VAN DIEU','VU VAN EM',
+  'VU VAN PHUONG','VU VAN GIAP','VU VAN HANH','VU VAN KHANH',
+  'VU VAN LAN','VU VAN MINH','VU VAN NGOC','VU VAN PHONG',
+  'VU VAN QUI','VU VAN SON','VU VAN TAM','VU VAN UN',
+  'VU VAN VAN','VU VAN XUAN','VU VAN YEN','VU VAN ZION',
+  'VU VAN HOA','VU VAN IU',
+  'VU THI AN','VU THI BAO','VU THI BICH','VU THI CHAU',
+  'VU THI CUONG','VU THI DAT','VU THI DIEU','VU THI EM',
+  'VU THI PHUONG','VU THI GIAP','VU THI HANH','VU THI KHANH',
+  'VU THI LAN','VU THI MINH','VU THI NGOC','VU THI PHONG',
+  'VU THI QUI','VU THI SON','VU THI TAM','VU THI UN',
+  'VU THI VAN','VU THI XUAN','VU THI YEN','VU THI ZION',
+  'VU THI HOA','VU THI IU',
+  'VO VAN AN','VO VAN BAO','VO VAN BICH','VO VAN CHAU',
+  'VO VAN CUONG','VO VAN DAT','VO VAN DIEU','VO VAN EM',
+  'VO VAN PHUONG','VO VAN GIAP','VO VAN HANH','VO VAN KHANH',
+  'VO VAN LAN','VO VAN MINH','VO VAN NGOC','VO VAN PHONG',
+  'VO VAN QUI','VO VAN SON','VO VAN TAM','VO VAN UN',
+  'VO VAN VAN','VO VAN XUAN','VO VAN YEN','VO VAN ZION',
+  'VO VAN HOA','VO VAN IU',
+  'VO THI AN','VO THI BAO','VO THI BICH','VO THI CHAU',
+  'VO THI CUONG','VO THI DAT','VO THI DIEU','VO THI EM',
+  'VO THI PHUONG','VO THI GIAP','VO THI HANH','VO THI KHANH',
+  'VO THI LAN','VO THI MINH','VO THI NGOC','VO THI PHONG',
+  'VO THI QUI','VO THI SON','VO THI TAM','VO THI UN',
+  'VO THI VAN','VO THI XUAN','VO THI YEN','VO THI ZION',
+  'VO THI HOA','VO THI IU',
+  'DANG VAN AN','DANG VAN BAO','DANG VAN BICH','DANG VAN CHAU',
+  'DANG VAN CUONG','DANG VAN DAT','DANG VAN DIEU','DANG VAN EM',
+  'DANG VAN PHUONG','DANG VAN GIAP','DANG VAN HANH','DANG VAN KHANH',
+  'DANG VAN LAN','DANG VAN MINH','DANG VAN NGOC','DANG VAN PHONG',
+  'DANG VAN QUI','DANG VAN SON','DANG VAN TAM','DANG VAN UN',
+  'DANG VAN VAN','DANG VAN XUAN','DANG VAN YEN','DANG VAN ZION',
+  'DANG VAN HOA','DANG VAN IU',
+  'DANG THI AN','DANG THI BAO','DANG THI BICH','DANG THI CHAU',
+  'DANG THI CUONG','DANG THI DAT','DANG THI DIEU','DANG THI EM',
+  'DANG THI PHUONG','DANG THI GIAP','DANG THI HANH','DANG THI KHANH',
+  'DANG THI LAN','DANG THI MINH','DANG THI NGOC','DANG THI PHONG',
+  'DANG THI QUI','DANG THI SON','DANG THI TAM','DANG THI UN',
+  'DANG THI VAN','DANG THI XUAN','DANG THI YEN','DANG THI ZION',
+  'DANG THI HOA','DANG THI IU'
+];
+
+// Tên thật 100% khớp với DS_NHOM trong chibo.gs
+const DS_CHI_BO_REAL = [
+  "Đảng ủy Công an phường",
+  "Đảng ủy Trung tâm Y tế khu vực Thanh Khê",
+  "Đảng ủy Công Ty Cổ phần Xây dựng Công trình 512",
+  "Đảng ủy Công ty Cổ phần In và Dịch vụ Đà Nẵng",
+  "Đảng ủy Công ty Cổ phần Dệt may 29/3",
+  "Đảng ủy Công ty Cổ phần Dược Danapha",
+  "Đảng ủy Trường Cao đẳng Thương mại",
+  "Đảng ủy Trường Đại học Thể dục thể thao Đà Nẵng",
+  "Đảng bộ Bưu điện thành phố Đà Nẵng",
+  "Đảng bộ Công ty TNHH MTV Thương Mại Quảng Nam - Đà Nẵng",
+  "Đảng bộ Ngân hàng TMCP Công Thương Việt Nam - Chi nhánh Đà Nẵng",
+
+  // ⚠️ ĐOẠN DƯỚI ĐÂY BỊ MẤT PREFIX - BẠN CẦN ĐỐI CHIẾU chibo.gs ĐỂ ĐIỀN LẠI
+  // Hiện tại đang là: "Khê Đông", "53 Thanh Khê Đông", "54 Hòa Khê"...
+  // Dạng đúng có thể là: "Chi bộ KP 52 Thanh Khê Đông", "Chi bộ KP 53 Thanh Khê Đông"...
+  "1 Tam Thuận",
+    "2 Tam Thuận",
+    "3 Tam Thuận",
+    "4 Tam Thuận",
+    "5 Tam Thuận",
+    "6 Tam Thuận",
+    "7 Tam Thuận",
+    "8 Tam Thuận",
+    "9 Tam Thuận",
+    "10 Tân Chính",
+    "11 Tân Chính",
+    "12 Tân Chính",
+    "13 Tân Chính",
+    "14 Tân Chính",
+    "15 Tân Chính",
+    "16 Vĩnh Trung",
+    "17 Vĩnh Trung",
+    "18 Vĩnh Trung",
+    "19 Vĩnh Trung",
+    "20 Vĩnh Trung",
+    "21 Vĩnh Trung",
+    "22 Vĩnh Trung",
+    "23 Thạc Gián",
+    "24 Thạc Gián",
+    "25 Thạc Gián",
+    "26 Thạc Gián",
+    "27 Thạc Gián",
+    "28 Thạc Gián",
+    "29 Thạc Gián",
+    "30 Thạc Gián",
+    "31 Thạc Gián",
+    "32 Xuân Hà",
+    "33 Xuân Hà",
+    "34 Xuân Hà",
+    "35 Xuân Hà",
+    "36 Xuân Hà",
+    "37 Xuân Hà",
+    "38 Xuân Hà",
+    "39 Xuân Hà",
+    "40 Chính Gián",
+    "41 Chính Gián",
+    "42 Chính Gián",
+    "43 Chính Gián",
+    "44 Chính Gián",
+    "45 Chính Gián",
+    "46 Chính Gián",
+    "47 Chính Gián",
+    "48 Chính Gián",
+    "49 Thanh Khê Đông",
+    "50 Thanh Khê Đông",
+    "51 Thanh Khê Đông",
+    "52 Thanh Khê Đông",
+    "53 Thanh Khê Đông",
+    "54 Hòa Khê",
+    "55 Hòa Khê",
+    "56 Hòa Khê",
+    "57 Hòa Khê",
+    "58 Hòa Khê",
+    "59 Hòa Khê",
+    "60 Hòa Khê",
+    "61 Hòa Khê",
+    "62 Hòa Khê",
+    "63 Hòa Khê",
+    "64 Hòa Khê",
+    "65 Thanh Khê Tây",
+    "66 Thanh Khê Tây",
+    "67 Thanh Khê Tây",
+    "68 Thanh Khê Tây",
+    "69 Thanh Khê Tây",
+    "70 Thanh Khê Tây",
+    "71 Thanh Khê Tây",
+    "72 Thanh Khê Tây",
+    "73 Thanh Khê Tây",
+    "74 Thanh Khê Tây",
+    "75 Thanh Khê Tây",
+    "76 Thanh Khê Tây",
+    "77 Thanh Khê Tây",
+    "78 Thanh Khê Tây",
+    "79 Thanh Khê Tây",
+    "80 Thanh Khê Tây",
+
+  "Chi bộ Ban Xây dựng Đảng Đảng ủy phường",
+  "Chi bộ Văn phòng Đảng ủy phường",
+  "Chi bộ Cơ quan Ủy Ban Mặt trận Tổ quốc Việt Nam phường",
+  "Chi bộ Hội đồng nhân dân phường",
+  "Chi bộ Văn phòng Hội đồng nhân dân và Ủy ban nhân dân phường",
+  "Chi bộ Phòng Văn hóa - Xã hội phường",
+  "Chi bộ Phòng Kinh tế, Hạ tầng và Đô thị phường",
+  "Chi bộ Trung tâm Phục vụ Hành chính công phường",
+  "Chi bộ Trung tâm Cung ứng Dịch vụ Sự nghiệp công phường",
+  "Chi bộ Ban Quản lý dự án đầu tư xây dựng phường",
+  "Chi bộ Quân sự",
+  "Chi bộ Trạm Y tế",
+  "Chi bộ Công ty Cổ phần Túi xách Đà Nẵng",
+  "Chi bộ BIDV Văn phòng đại diện tại thành phố Đà Nẵng",
+  "Chi bộ Công ty Bảo hiểm PJICO Đà Nẵng",
+  "Chi bộ Công ty CP Tư vấn XD và Đầu tư Trường Định",
+  "Chi bộ Ngân hàng TMCP An Bình Chi nhánh Đà Nẵng",
+  "Chi bộ Công ty Bảo Minh Đà Nẵng",
+  "Chi bộ Ngân hàng TMCP Tiên Phong Chi nhánh ĐN",
+  "Chi bộ Trường Trung học phổ thông Quang Trung (tư thục)",
+  "Chi bộ VPĐD Miền Trung Ngân Hàng TMCP Kỹ Thương Việt Nam",
+  "Chi bộ Công ty Cổ phần Dịch vụ bảo vệ An Ninh",
+  "Chi bộ Công ty Cổ phần Tư vấn và Phát triển kỹ thuật Tài nguyên nước",
+  "Chi bộ Công ty Cổ phần Xây lắp Điện và Cơ khí mạ Đà Nẵng",
+  "Chi bộ Trung tâm Giáo dục thường xuyên số 2",
+  "Chi bộ Trường Trung học phổ thông Thái Phiên",
+  "Chi bộ Công ty Trách nhiệm hữu hạn Dịch vụ Bảo vệ an ninh Quốc Đô",
+  "Chi bộ Trung tâm Huấn luyện VĐV trẻ Quốc gia",
+  "Chi bộ Trường Trung học phổ thông Thanh Khê",
+  "Chi bộ Trường Mầm non Mẫu Đơn",
+  "Chi bộ Trường Mầm non Tuổi Hoa",
+  "Chi bộ Trường Mầm non Hải Đường",
+  "Chi bộ Trường Mầm non Cẩm Nhung",
+  "Chi bộ Trường Mầm non Tường Vy",
+  "Chi bộ Trường Tiểu học Đoàn Thị Điểm",
+  "Chi bộ Trường Tiểu học Huỳnh Ngọc Huệ",
+  "Chi bộ Trường Tiểu học Dũng Sĩ Thanh Khê",
+  "Chi bộ Trường Tiểu học Đinh Bộ Lĩnh",
+  "Chi bộ Trường Tiểu học Trần Cao Vân",
+  "Chi bộ Trường Tiểu học Hoa Lư",
+  "Chi bộ Trường Trung học cơ sở Phan Đình Phùng",
+  "Chi bộ Trường Trung học cơ sở Nguyễn Chơn",
+  "Chi bộ Trường Trung học cơ sở Nguyễn Trãi",
+  "Chi bộ Trường Trung học cơ sở Chu Văn An",
+  "Chi bộ Trường Trung học cơ sở Huỳnh Thúc Kháng",
+  "Chi bộ Tổng Công ty Miền Trung - CTCP",
+  "Chi bộ Cty TNHH Kiểm toán & DV tin học Moore Aisc tại ĐN",
+  "Chi bộ Công ty Cổ phần Giám định Á Việt",
+  "Chi bộ Công ty Cổ phần Xây dựng Giao thông 503",
+  "Chi bộ Công ty Cổ phần Sinh học Minh Hồng",
+  "Chi bộ Trường Trung cấp Chuyên nghiệp Ý Việt"
+];
+
+const DS_BO_DE = ["Bộ đề số 1", "Bộ đề số 2", "Bộ đề số 3"];
+const MAX_BATCH_SIZE = 30;
+
+// ============================================================
+// TRẠNG THÁI
+// ============================================================
+let isRunning = false, shouldStop = false;
+let stats = { session: 0, success: 0, retry: 0, error: 0, totalTime: 0, countTime: 0, totalScore: 0, scored: 0 };
+let logLines = [];
+
+const $ = id => document.getElementById(id);
+
+function log(msg, type = 'info') {
+  const logEl = $('log');
+  const time = new Date().toLocaleTimeString('vi-VN');
+  const line = `[${time}] ${msg}`;
+  const entry = document.createElement('div');
+  entry.className = 'log-entry log-' + type;
+  entry.textContent = line;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+  logLines.push(line);
+  while (logEl.children.length > 800) logEl.removeChild(logEl.firstChild);
+  $('logCount').textContent = logLines.length + ' dòng';
+}
+
+function updateStats() {
+  $('statSession').textContent = stats.session;
+  $('statSuccess').textContent = stats.success;
+  $('statRetry').textContent = stats.retry;
+  $('statError').textContent = stats.error;
+  const avg = stats.countTime > 0 ? Math.round(stats.totalTime / stats.countTime) : 0;
+  $('statAvgTime').textContent = avg;
+  const avgScore = stats.scored > 0 ? (stats.totalScore / stats.scored).toFixed(1) : '0';
+  $('statAvgScore').textContent = avgScore;
+}
+
+function updateProgress(cur, total, hasErrors) {
+  const pct = total > 0 ? (cur / total * 100) : 0;
+  $('progressFill').style.width = pct + '%';
+  $('progressFill').className = 'progress-fill' + (hasErrors ? ' err-mix' : '');
+  $('progressText').textContent = `${cur} / ${total}`;
+}
+
+function setPhase(text, state = 'running') {
+  const el = $('phaseIndicator');
+  el.textContent = text;
+  el.className = 'phase-indicator' + (state === 'done' ? ' done' : state === 'idle' ? ' idle' : state === 'error' ? ' error' : '');
+}
+
+function showBanner(type, big, detail) {
+  const el = $('resultBanner');
+  el.className = 'result-banner show ' + type;
+  el.innerHTML = `<span class="big">${big}</span><span class="detail">${detail}</span>`;
+}
+function hideBanner() {
+  const el = $('resultBanner');
+  el.className = 'result-banner';
+  el.innerHTML = '';
+}
+
+function random(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function toggleAdvanced() {
+  const c = $('advancedContent');
+  const t = $('advToggleText');
+  if (c.classList.contains('open')) {
+    c.classList.remove('open');
+    t.textContent = 'Tùy chỉnh nâng cao';
+  } else {
+    c.classList.add('open');
+    t.textContent = '▾ Ẩn tùy chỉnh nâng cao';
+  }
+}
+
+// ============================================================
+// TIỆN ÍCH CHUNG
+// ============================================================
+async function fetchWithTimeout(url, options, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try { return await fetch(url, {...options, signal: controller.signal}); }
+  finally { clearTimeout(timer); }
+}
+
+function normalizeUrl(raw) { return (raw || '').trim(); }
+function validServerUrl(url) {
+  return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(url);
+}
+
+function formatNow() {
+  const now = new Date();
+  const p2 = n => String(n).padStart(2, '0');
+  return `${p2(now.getDate())}/${p2(now.getMonth()+1)}/${now.getFullYear()}, ` +
+         `${p2(now.getHours())}:${p2(now.getMinutes())}:${p2(now.getSeconds())}`;
+}
+
+// ============================================================
+// PING SERVER
+// ============================================================
+async function pingServer() {
+  const serverUrl = normalizeUrl($('serverUrl').value);
+  const resEl = $('pingResult');
+  const btn = $('btnPing');
+
+  if (!serverUrl) {
+    resEl.className = 'ping-result show fail';
+    resEl.textContent = '❌ Vui lòng nhập SERVER_URL trước.';
+    return;
+  }
+  if (!validServerUrl(serverUrl)) {
+    resEl.className = 'ping-result show fail';
+    resEl.textContent = '⚠️ URL không đúng định dạng .../exec — kiểm tra lại link Web App đã Deploy.';
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang kiểm tra...';
+  resEl.className = 'ping-result show';
+  resEl.textContent = '⏳ Đang gọi server...';
+
+  const t0 = Date.now();
+  try {
+    const resp = await fetchWithTimeout(serverUrl + '?action=getQuestions&phan=1', {}, 15000);
+    const elapsed = Date.now() - t0;
+    let data;
+    try { data = await resp.json(); }
+    catch (parseErr) { throw new Error('Server trả về không phải JSON hợp lệ.'); }
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${resp.statusText}`);
+
+    // Server MỚI trả về "token" thay vì "sessionId"; vẫn chấp nhận "sessionId" để tương thích ngược
+if (data.success && (data.token || data.sessionId) && data.questions) {
+  resEl.className = 'ping-result show ok';
+  resEl.textContent = `✅ Kết nối OK (${elapsed}ms). "${data.boDe}" có ${data.questions.length} câu hỏi.`;
+  log(`📡 Ping thành công: ${data.boDe}, ${data.questions.length} câu, ${elapsed}ms`, 'success');
+    } else {
+      resEl.className = 'ping-result show fail';
+      resEl.textContent = `⚠️ Server phản hồi nhưng báo lỗi: ${data.error || 'Không rõ nguyên nhân'}.`;
+      log(`⚠️ Ping có phản hồi nhưng lỗi nghiệp vụ: ${data.error}`, 'warn');
+    }
+  } catch (err) {
+    resEl.className = 'ping-result show fail';
+    const msg = err.name === 'AbortError' ? 'Timeout — server không phản hồi sau 15s.' : err.message;
+    resEl.textContent = `❌ Không kết nối được: ${msg}`;
+    log(`❌ Ping thất bại: ${msg}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📡 Kiểm tra';
+  }
+}
+
+// ============================================================
+// GỬI THỬ 1 BÀI
+// ============================================================
+function fillRandomSingle() {
+  $('singleHoTen').value = random(DS_TEN);
+  $('singleNamSinh').value = randomInt(1960, 2005);
+  $('singleChiBo').value = random(DS_CHI_BO_REAL);
+  $('singleCauHoiPhu').value = randomInt(100, 9999);
+  $('singleThoiGianLamBai').value = randomInt(60, 40 * 60);
+  log('🎲 Đã điền dữ liệu ngẫu nhiên cho form gửi thử', 'info');
+}
+
+async function getSession(phan, timeoutMs) {
+  const serverUrl = normalizeUrl($('serverUrl').value);
+  const url = `${serverUrl}?action=getQuestions&phan=${phan}`;
+  const resp = await fetchWithTimeout(url, {}, timeoutMs);
+  let data;
+  try { data = await resp.json(); }
+  catch (e) { throw new Error('Phản hồi không phải JSON hợp lệ (HTTP ' + resp.status + ')'); }
+
+  // Server MỚI trả về "token" (HMAC), server CŨ trả về "sessionId" — chuẩn hoá về 1 biến
+  const sessionToken = data.token || data.sessionId;
+  if (data.success && sessionToken && data.questions) {
+    return {
+      token: sessionToken,
+      boDe: data.boDe,
+      questions: data.questions
+    };
+  }
+  throw new Error(data.error || 'Không lấy được token phiên thi');
+}
+
+function buildAnswers(questions) {
+  const answers = {};
+  questions.forEach(q => { answers['q' + q.id] = random(q.options); });
+  return answers;
+}
+
+async function submitSingleTrial() {
+  const serverUrl = normalizeUrl($('serverUrl').value);
+  if (!serverUrl) { alert('⚠️ Nhập SERVER_URL trước!'); return; }
+  if (!validServerUrl(serverUrl) && !confirm('URL có vẻ không đúng định dạng .../exec. Vẫn tiếp tục?')) return;
+  if (isRunning) { alert('⚠️ Đang chạy tác vụ khác, đợi xong đã.'); return; }
+
+  const phan = parseInt($('singleBoDe').value) || 1;
+  const timeout = parseInt($('requestTimeout').value) || 30000;
+
+  isRunning = true;
+  $('btnSingleSubmit').disabled = true;
+  $('btnSingleRandom').disabled = true;
+  document.querySelectorAll('.btn-preset').forEach(b => b.disabled = true);
+  hideBanner();
+
+  try {
+    // 1. Lấy đề
+    setPhase('🔄 ĐANG LẤY ĐỀ...');
+    log(`→ Gọi doGet lấy session (bộ đề ${phan})...`, 'info');
+    const t0 = Date.now();
+    const session = await getSession(phan, timeout);
+    const tGet = Date.now() - t0;
+    const tokenShort = String(session.token).slice(0, 24) + '...';
+    log(`✅ Nhận token: ${tokenShort} — "${session.boDe}" (${session.questions.length} câu) — ${tGet}ms`, 'success');
+    stats.session++;
+
+    // 2. Chuẩn bị payload
+      const payload = {
+     action: 'submitQuiz',
+     token: session.token,
+     sessionId: session.token,  // gửi kèm để tương thích với server CŨ nếu có
+      hoTen: $('singleHoTen').value.trim(),
+      namSinh: $('singleNamSinh').value.trim(),
+      chiBo: $('singleChiBo').value.trim(),
+      boDe: session.boDe,
+      answers: buildAnswers(session.questions),
+      cauHoiPhu: parseInt($('singleCauHoiPhu').value) || 0,
+      thoiGianLamBai: parseInt($('singleThoiGianLamBai').value) || 0,
+      thoiGianNop: formatNow()
+    };
+    if ($('singleAutoSubmit').checked) payload.autoSubmit = true;
+
+    log(`→ Nộp bài cho "${payload.hoTen}" (${payload.chiBo}) — ${payload.thoiGianLamBai}s`, 'info');
+
+    // 3. Gửi bài
+    setPhase('🚀 ĐANG NỘP BÀI...');
+    const t1 = Date.now();
+    const resp = await fetchWithTimeout(serverUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }, timeout);
+    const tPost = Date.now() - t1;
+    stats.totalTime += tPost; stats.countTime++;
+
+    let result;
+    try { result = await resp.json(); }
+    catch (e) { throw new Error('Phản hồi POST không phải JSON hợp lệ (HTTP ' + resp.status + ')'); }
+
+    log(`📥 Server trả về (${tPost}ms): ${JSON.stringify(result)}`, 'info');
+
+    if (result.success) {
+      stats.success++;
+      if (typeof result.score === 'number' && typeof result.total === 'number') {
+        stats.totalScore += result.score; stats.scored++;
+      }
+      setPhase('✅ NỘP THÀNH CÔNG', 'done');
+      const diem = (typeof result.score === 'number' && typeof result.total === 'number')
+        ? `${result.score}/${result.total}` : '—';
+      showBanner('success', '✅ NỘP BÀI THÀNH CÔNG',
+        `Điểm: <b>${diem}</b> • Token: ${tokenShort} • ${tPost}ms<br>` +
+        `<span style="opacity:.7">${result.message || ''}</span>`);
+      log(`🎉 Nộp thành công — Điểm ${diem}`, 'success');
+    } else if (result.retry) {
+      stats.retry++;
+      setPhase('🔁 CẦN RETRY', 'error');
+      showBanner('warn', '🔁 SERVER YÊU CẦU RETRY', `Lý do: ${result.error || 'Không rõ'}`);
+      log(`🔁 Retry: ${result.error}`, 'warn');
+    } else {
+      stats.error++;
+      setPhase('❌ NỘP THẤT BẠI', 'error');
+      showBanner('fail', '❌ NỘP BÀI THẤT BẠI', `Lỗi: ${result.error || 'Không rõ nguyên nhân'}`);
+      log(`❌ Server báo lỗi: ${result.error}`, 'error');
+    }
+    updateStats();
+    updateProgress(1, 1, stats.error > 0);
+  } catch (err) {
+    const msg = err.name === 'AbortError' ? 'Timeout — server không phản hồi kịp.' : err.message;
+    stats.error++;
+    updateStats();
+    setPhase('💥 LỖI', 'error');
+    showBanner('fail', '💥 CÓ LỖI XẢY RA', msg);
+    log(`💥 ${msg}`, 'error');
+  } finally {
+    isRunning = false;
+    $('btnSingleSubmit').disabled = false;
+    $('btnSingleRandom').disabled = false;
+    document.querySelectorAll('.btn-preset').forEach(b => b.disabled = false);
+  }
+}
+
+// ============================================================
+// PRESET TEST TẢI HÀNG LOẠT
+// ============================================================
+function runPreset(total, batch, delay, rate) {
+  if (isRunning) { alert('⚠️ Đang chạy tác vụ khác.'); return; }
+  $('totalTests').value = total;
+  $('batchSize').value = Math.min(batch, MAX_BATCH_SIZE);
+  $('batchDelay').value = delay;
+  $('correctRate').value = rate;
+  runTest();
+}
+
+// ============================================================
+// GIAI ĐOẠN 1: LẤY SESSION HÀNG LOẠT
+// ============================================================
+async function getSessionId(phan) {
+  return await getSession(phan, parseInt($('requestTimeout').value));
+}
+
+async function acquireSessions(total) {
+  const batchSize = Math.min(parseInt($('batchSize').value) || 1, MAX_BATCH_SIZE);
+  const batchDelay = parseInt($('batchDelay').value);
+  const acquired = [];
+  log(`🎯 Lấy ${total} session (batch ${batchSize}, luân phiên 3 bộ đề)...`, 'info');
+  setPhase('🔄 LẤY SESSION');
+
+  for (let i = 0; i < total; i += batchSize) {
+    if (shouldStop) break;
+    const batch = [];
+    const batchEnd = Math.min(i + batchSize, total);
+    for (let j = i; j < batchEnd; j++) {
+      const phan = (j % 3) + 1;
+      batch.push(
+        getSessionId(phan).then(r => ({ok: true, data: r}))
+          .catch(e => {
+            const msg = (e.name === 'AbortError' || /abort/i.test(e.message))
+              ? `Timeout — server không phản hồi kịp trong ${$('requestTimeout').value}ms`
+              : e.message;
+            return {ok: false, err: msg};
+          })
+      );
+    }
+    const results = await Promise.all(batch);
+    let errCount = 0;
+    results.forEach(r => {
+      if (r.ok) { acquired.push(r.data); stats.session++; }
+      else { stats.error++; errCount++; log(`❌ Lấy session lỗi: ${r.err}`, 'error'); }
+    });
+    if (errCount > 0) log(`⚠️ ${errCount} lỗi lấy session trong batch này`, 'warn');
+    updateStats();
+    updateProgress(acquired.length, total, stats.error > 0);
+    if (batchEnd < total && !shouldStop) await new Promise(r => setTimeout(r, batchDelay));
+  }
+  return acquired;
+}
+
+// ============================================================
+// GIAI ĐOẠN 2: GỬI BÀI HÀNG LOẠT (doPost)
+// ============================================================
+function fakeData(questions, correctRate) {
+  return {
+    hoTen: random(DS_TEN),
+    namSinh: randomInt(1960, 2005).toString(),
+    chiBo: random(DS_CHI_BO_REAL),
+    boDe: random(DS_BO_DE),
+    answers: buildAnswers(questions),
+    cauHoiPhu: randomInt(100, 9999),
+    thoiGianLamBai: randomInt(60, 40 * 60),
+    thoiGianNop: formatNow()
+  };
+}
+
+function shouldAutoSubmit() {
+  const mode = ($('autoSubmitMode') || {}).value || 'off';
+  if (mode === 'on')  return true;
+  if (mode === 'mix') return Math.random() < 0.5;
+  return false;
+}
+
+async function submitTest(session) {
+  const serverUrl = normalizeUrl($('serverUrl').value);
+  const timeout = parseInt($('requestTimeout').value);
+  const correctRate = parseInt($('correctRate').value);
+
+  const data = fakeData(session.questions, correctRate);
+  const payload = {
+    action: 'submitQuiz',
+    token: session.token,
+    sessionId: session.token,  // tương thích ngược
+    hoTen: data.hoTen,
+    namSinh: data.namSinh,
+    chiBo: data.chiBo,
+    boDe: session.boDe || data.boDe,
+    answers: data.answers,
+    cauHoiPhu: data.cauHoiPhu,
+    thoiGianLamBai: data.thoiGianLamBai,
+    thoiGianNop: data.thoiGianNop
+  };
+  if (shouldAutoSubmit()) payload.autoSubmit = true;
+
+  const startTime = Date.now();
+  try {
+    const resp = await fetchWithTimeout(serverUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }, timeout);
+    let result;
+    try { result = await resp.json(); }
+    catch (e) { throw new Error('Phản hồi không phải JSON hợp lệ (HTTP ' + resp.status + ')'); }
+    const elapsed = Date.now() - startTime;
+    stats.totalTime += elapsed; stats.countTime++;
+
+    if (result.success) {
+      stats.success++;
+      if (typeof result.score === 'number' && typeof result.total === 'number') {
+        stats.totalScore += result.score; stats.scored++;
+      }
+      return {ok: true, elapsed, score: result.score, total: result.total};
+    }
+    if (result.retry) {
+      stats.retry++;
+      return {ok: false, retry: true, error: result.error, elapsed};
+    }
+    stats.error++;
+    return {ok: false, error: result.error, elapsed};
+  } catch (err) {
+    const elapsed = Date.now() - startTime;
+    stats.totalTime += elapsed; stats.countTime++; stats.error++;
+    const msg = err.name === 'AbortError' ? 'Timeout — không phản hồi kịp' : err.message;
+    return {ok: false, error: msg, elapsed};
+  }
+}
+
+async function submitAllSessions(sessions) {
+  const batchSize = Math.min(parseInt($('batchSize').value) || 1, MAX_BATCH_SIZE);
+  const batchDelay = parseInt($('batchDelay').value);
+  const total = sessions.length;
+  let done = 0;
+  log(`🚀 Gửi ${total} bài (batch ${batchSize})...`, 'info');
+  setPhase('🚀 GỬI BÀI');
+
+  for (let i = 0; i < total; i += batchSize) {
+    if (shouldStop) break;
+    const batch = [];
+    const batchEnd = Math.min(i + batchSize, total);
+    for (let j = i; j < batchEnd; j++) batch.push(submitTest(sessions[j]));
+    const results = await Promise.all(batch);
+    results.forEach((r, idx) => {
+      const idxG = i + idx;
+      if (r.ok) {
+        const diem = (typeof r.score === 'number') ? ` — ${r.score}/${r.total} điểm` : '';
+        log(`✅ [${idxG+1}] OK${diem} (${r.elapsed}ms)`, 'success');
+      }
+      else if (r.retry) log(`🔁 [${idxG+1}] Retry: ${r.error} (${r.elapsed}ms)`, 'warn');
+      else log(`❌ [${idxG+1}] LỖI: ${r.error} (${r.elapsed}ms)`, 'error');
+    });
+    done = batchEnd;
+    updateStats();
+    updateProgress(done, total, stats.error > 0);
+    if (batchEnd < total && !shouldStop) await new Promise(r => setTimeout(r, batchDelay));
+  }
+  return done;
+}
+
+// ============================================================
+// XUẤT LOG
+// ============================================================
+function exportLog() {
+  if (logLines.length === 0) { alert('Chưa có nhật ký để xuất.'); return; }
+  const avgScore = stats.scored > 0 ? (stats.totalScore / stats.scored).toFixed(2) : '0';
+  const header = [
+    '=== BÁO CÁO TEST APP THI ===',
+    `Thời gian xuất: ${new Date().toLocaleString('vi-VN')}`,
+    `Server: ${normalizeUrl($('serverUrl').value)}`,
+    `Session: ${stats.session} | OK: ${stats.success} | Retry: ${stats.retry} | Lỗi: ${stats.error}`,
+    `Điểm TB (server chấm): ${avgScore}`,
+    '================================', ''
+  ];
+  const blob = new Blob([header.join('\n') + logLines.join('\n')], {type: 'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `test-log-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
+// CHẠY TEST HÀNG LOẠT
+// ============================================================
+async function runTest() {
+  const total = parseInt($('totalTests').value);
+  const serverUrl = normalizeUrl($('serverUrl').value);
+
+  if (!serverUrl) { alert('⚠️ Vui lòng nhập SERVER_URL trước khi chạy test!'); return; }
+  if (!validServerUrl(serverUrl)) {
+    if (!confirm('URL có vẻ không đúng định dạng .../exec. Vẫn tiếp tục?')) return;
+  }
+  if (!total || total < 1) { alert('⚠️ Số bài phải lớn hơn 0.'); return; }
+  if (isRunning) { alert('⚠️ Đang chạy tác vụ khác.'); return; }
+
+  const batchInput = $('batchSize');
+  if (parseInt(batchInput.value) > MAX_BATCH_SIZE) {
+    batchInput.value = MAX_BATCH_SIZE;
+    log(`⚠️ Batch size đã tự động giới hạn về ${MAX_BATCH_SIZE}`, 'warn');
+  }
+
+  isRunning = true; shouldStop = false;
+  hideBanner();
+  $('btnStop').disabled = false;
+  $('btnSingleSubmit').disabled = true;
+  $('btnSingleRandom').disabled = true;
+  document.querySelectorAll('.btn-preset').forEach(b => b.disabled = true);
+
+  try {
+    const sessions = await acquireSessions(total);
+    if (shouldStop) {
+      log('⏹️ Đã dừng theo yêu cầu', 'warn');
+      setPhase('⏸️ ĐÃ DỪNG', 'idle');
+      showBanner('warn', '⏹️ ĐÃ DỪNG THEO YÊU CẦU', `Đã lấy ${sessions.length}/${total} session trước khi dừng.`);
+      return;
+    }
+    if (sessions.length === 0) {
+      log('❌ Không lấy được session nào.', 'error');
+      setPhase('❌ LỖI', 'error');
+      showBanner('fail', '❌ TEST THẤT BẠI',
+        'Không lấy được session nào — kiểm tra SERVER_URL và QUESTION_SETS.');
+      return;
+    }
+    log(`✅ Lấy ${sessions.length}/${total} session. Chuyển sang gửi bài...`, 'success');
+
+    const submitted = await submitAllSessions(sessions);
+    const okRate = stats.session > 0 ? (stats.success / stats.session * 100) : 0;
+    const avg = stats.countTime > 0 ? Math.round(stats.totalTime / stats.countTime) : 0;
+    const avgScore = stats.scored > 0 ? (stats.totalScore / stats.scored).toFixed(1) : '0';
+
+    if (shouldStop) {
+      log(`⏹️ Dừng. Đã gửi ${submitted}/${sessions.length}`, 'warn');
+      setPhase('⏸️ ĐÃ DỪNG', 'idle');
+      showBanner('warn', '⏹️ ĐÃ DỪNG THEO YÊU CẦU',
+        `Đã gửi ${submitted}/${sessions.length} bài trước khi dừng. Tỷ lệ OK: ${okRate.toFixed(1)}%`);
+    } else {
+      log(`🎉 HOÀN THÀNH! ${submitted}/${sessions.length} bài`, 'success');
+      setPhase('✅ HOÀN THÀNH', 'done');
+      if (stats.error === 0 && stats.retry === 0) {
+        showBanner('success', '🎉 APP HOẠT ĐỘNG ỔN ĐỊNH!',
+          `${stats.success}/${stats.session} bài OK (100%) • TB ${avg}ms • Điểm TB ${avgScore}. Không có lỗi nào.`);
+      } else if (okRate >= 95) {
+        showBanner('success', '✅ APP HOẠT ĐỘNG TỐT',
+          `${stats.success}/${stats.session} bài OK (${okRate.toFixed(1)}%) • ${stats.retry} retry • ${stats.error} lỗi • TB ${avg}ms • Điểm TB ${avgScore}.`);
+      } else if (okRate >= 70) {
+        showBanner('warn', '⚠️ APP CÓ VẤN ĐỀ CẦN KIỂM TRA',
+          `Chỉ ${okRate.toFixed(1)}% thành công (${stats.success}/${stats.session}) • ${stats.error} lỗi • ${stats.retry} retry.`);
+      } else {
+        showBanner('fail', '❌ APP CÓ NHIỀU LỖI',
+          `Chỉ ${okRate.toFixed(1)}% thành công (${stats.success}/${stats.session}) • ${stats.error} lỗi • ${stats.retry} retry.`);
+      }
+    }
+
+    log('═══════════════════════════════════', 'info');
+    log(`📊 TỔNG KẾT: Session ${stats.session} | OK ${stats.success} | Retry ${stats.retry} | Lỗi ${stats.error}`, 'info');
+    log(`⏱️ TB ${avg}ms • Tỷ lệ OK ${okRate.toFixed(1)}% • Điểm TB ${avgScore}`, 'info');
+    log('💡 Kiểm tra Sheets: KetQuaThi / DuPhong / NhatKy / ThongKeChiBo', 'info');
+    log('═══════════════════════════════════', 'info');
+  } catch (err) {
+    log(`💥 LỖI KHÔNG XÁC ĐỊNH: ${err.message}`, 'error');
+    setPhase('💥 LỖI', 'error');
+    showBanner('fail', '💥 CÓ LỖI XẢY RA', err.message);
+  } finally {
+    isRunning = false;
+    $('btnStop').disabled = true;
+    $('btnSingleSubmit').disabled = false;
+    $('btnSingleRandom').disabled = false;
+    document.querySelectorAll('.btn-preset').forEach(b => b.disabled = false);
+  }
+}
+
+function stopTest() { shouldStop = true; log('⏹️ Đang dừng...', 'warn'); }
+
+function resetTest() {
+  if (isRunning) { alert('⚠️ Đang chạy, không thể reset. Bấm DỪNG trước.'); return; }
+  stats = { session: 0, success: 0, retry: 0, error: 0, totalTime: 0, countTime: 0, totalScore: 0, scored: 0 };
+  logLines = [];
+  updateStats(); updateProgress(0, 0, false);
+  $('log').innerHTML = '';
+  $('logCount').textContent = '0 dòng';
+  $('pingResult').className = 'ping-result';
+  $('pingResult').textContent = '';
+  hideBanner();
+  setPhase('⏸️ CHỜ', 'idle');
+  log('🔄 Đã reset', 'info');
+}
+
+// ============================================================
+// KHỞI TẠO
+// ============================================================
+(function init() {
+  const dl = $('dsChiBo');
+  DS_CHI_BO_REAL.forEach(cb => {
+    const opt = document.createElement('option');
+    opt.value = cb;
+    dl.appendChild(opt);
+  });
+
+  log('👋 Nhập SERVER_URL rồi bấm "📡 Kiểm tra" để xác nhận server.', 'info');
+  log('📝 Form "GỬI THỬ 1 BÀI" để nộp thử 1 bài có kiểm soát.', 'info');
+  log('⚡ 4 nút preset bên dưới để test tải: 10 → 100 → 500 → 1000 bài.', 'info');
+  log('🎲 Nút "Random" trong form gửi thử sẽ tự điền dữ liệu.', 'info');
+})();
+</script>
+</body>
+</html>
