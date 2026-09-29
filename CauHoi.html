@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ngân hàng câu hỏi & Đáp án</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    color: #0056b3;
+    margin: 0 0 4px;
+    font-size: 1.35em;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 18px;
+    font-size: 0.92em;
+  }
+  .subtitle .g { color: #155724; font-weight: 700; }
+  .subtitle .p { color: #8b1e3f; font-weight: 700; }
+
+  /* Thanh công cụ */
+  .toolbar {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+  }
+  .toolbar label { font-weight: 600; color: #444; font-size: 0.9em; }
+  .toolbar select, .toolbar input {
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.92em;
+    font-family: inherit;
+    outline: none;
+  }
+  .toolbar select:focus, .toolbar input:focus { border-color: #007bff; }
+  .toolbar input { flex: 1; min-width: 150px; }
+  .stat {
+    background: #e7f3ff;
+    color: #0056b3;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85em;
+    border: 1px solid #b8daff;
+    white-space: nowrap;
+  }
+
+  /* Câu hỏi */
+  .question-block {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .question-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .q-number {
+    background: #007bff;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.78em;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .category-badge {
+    background: #6c757d;
+    color: #fff;
+    font-size: 0.72em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+  .question-text {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1.02em;
+  }
+  .options { list-style: none; padding: 0; margin: 0; }
+  .options li {
+    padding: 9px 14px;
+    margin: 6px 0;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.95em;
+    position: relative;
+  }
+  /* Đáp án đúng - XANH */
+  .options li.correct {
+    background: #d4edda;
+    color: #155724;
+    border-color: #a3d8b1;
+    font-weight: 600;
+  }
+  /* Đáp án sai - HỒNG */
+  .options li.wrong {
+    background: #fde2e7;
+    color: #8b1e3f;
+    border-color: #f5b8c4;
+  }
+  .tag {
+    float: right;
+    font-size: 0.72em;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .tag.ok { background: #155724; color: #fff; }
+  .tag.no { background: #8b1e3f; color: #fff; }
+
+  .empty {
+    text-align: center;
+    color: #888;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+  }
+  .footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.85em;
+    margin-top: 24px;
+    padding-bottom: 10px;
+  }
+  @media (max-width: 520px) {
+    .tag { float: none; display: inline-block; margin-top: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>NGÂN HÀNG CÂU HỎI &amp; ĐÁP ÁN</h1>
+  <p class="subtitle">
+    Đáp án <span class="g">ĐÚNG</span> tô nền xanh •
+    Đáp án <span class="p">SAI</span> tô nền hồng
+  </p>
+
+  <div class="toolbar">
+    <label for="filter-select">Chuyên đề:</label>
+    <select id="filter-select"></select>
+
+    <label for="search-input">Tìm kiếm:</label>
+    <input id="search-input" type="text" placeholder="Nhập từ khóa trong câu hỏi...">
+
+    <span class="stat" id="stat-count">0 câu</span>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <div class="footer">Tổng số câu hỏi trong ngân hàng: <span id="stat-total">0</span></div>
+</div>
+
+<script src="questions.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const container   = document.getElementById('quiz-container');
+  const filterSel   = document.getElementById('filter-select');
+  const searchInput = document.getElementById('search-input');
+  const statCount   = document.getElementById('stat-count');
+  const statTotal   = document.getElementById('stat-total');
+
+  /* ---------- Chuẩn hóa dữ liệu từ QUESTION_POOL ---------- */
+  if (typeof QUESTION_POOL === 'undefined') {
+    container.innerHTML = '<p class="empty" style="color:#c00;">Không tìm thấy file questions.js. Hãy đặt file questions.js cùng thư mục với file HTML này.</p>';
+    return;
+  }
+
+  const allQuestions = Object.keys(QUESTION_POOL)
+    .map(k => Number(k))
+    .sort((a, b) => a - b)
+    .map(id => Object.assign({ id: id }, QUESTION_POOL[id]));
+
+  statTotal.textContent = allQuestions.length;
+
+  /* ---------- Tiện ích ---------- */
+  function normalize(s) {
+    return (s || '').toString().trim();
+  }
+
+  // Lấy chữ cái đầu của đáp án: "A. ..." -> "A"
+  function letterOf(s) {
+    const m = normalize(s).match(/^([A-Za-z])\s*[\.\)]/);
+    return m ? m[1].toUpperCase() : null;
+  }
+
+  // Xác định 1 phương án có phải đáp án đúng không
+  function isCorrectOption(optionText, correctText) {
+    if (normalize(optionText) === normalize(correctText)) return true;
+    const lo = letterOf(optionText);
+    const lc = letterOf(correctText);
+    return lo !== null && lc !== null && lo === lc;
+  }
+
+  function escapeHtml(str) {
+    return (str || '').replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---------- Đổ danh sách chuyên đề vào bộ lọc ---------- */
+  const categories = [];
+  allQuestions.forEach(q => {
+    const c = q.category || 'Khác';
+    if (categories.indexOf(c) === -1) categories.push(c);
+  });
+
+  filterSel.innerHTML =
+    '<option value="all">Tất cả (' + allQuestions.length + ')</option>' +
+    categories.map(c => {
+      const n = allQuestions.filter(q => (q.category || 'Khác') === c).length;
+      return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + ' (' + n + ')</option>';
+    }).join('');
+
+  /* ---------- Render ---------- */
+  function render() {
+    const cat = filterSel.value;
+    const kw  = searchInput.value.trim().toLowerCase();
+
+    const list = allQuestions.filter(q => {
+      const qCat = q.category || 'Khác';
+      if (cat !== 'all' && qCat !== cat) return false;
+      if (kw && q.text.toLowerCase().indexOf(kw) === -1) return false;
+      return true;
+    });
+
+    statCount.textContent = list.length + ' câu';
+
+    if (list.length === 0) {
+      container.innerHTML = '<p class="empty">Không có câu hỏi nào phù hợp.</p>';
+      return;
+    }
+
+    const html = list.map(function (q, idx) {
+      const optionsHtml = (q.options || []).map(function (opt) {
+        const ok = isCorrectOption(opt, q.correctAnswer);
+        return '<li class="' + (ok ? 'correct' : 'wrong') + '">' +
+                 escapeHtml(opt) +
+                 '<span class="tag ' + (ok ? 'ok' : 'no') + '">' +
+                   (ok ? 'ĐÁP ÁN ĐÚNG' : 'SAI') +
+                 '</span>' +
+               '</li>';
+      }).join('');
+
+      return '<div class="question-block">' +
+               '<div class="question-header">' +
+                 '<span class="q-number">Câu ' + (idx + 1) + ' · ID ' + q.id + '</span>' +
+                 (q.category ? '<span class="category-badge">' + escapeHtml(q.category) + '</span>' : '') +
+               '</div>' +
+               '<div class="question-text">' + escapeHtml(q.text) + '</div>' +
+               '<ul class="options">' + optionsHtml + '</ul>' +
+             '</div>';
+    }).join('');
+
+    container.innerHTML = html;
+  }
+
+  /* ---------- Sự kiện ---------- */
+  filterSel.addEventListener('change', render);
+  searchInput.addEventListener('input', render);
+
+  /* ---------- Khởi chạy ---------- */
+  render();
+})();
+</script>
+</body>
+</html>
