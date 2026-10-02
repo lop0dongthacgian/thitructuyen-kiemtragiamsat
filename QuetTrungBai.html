@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thống kê KetQuaThi</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Bổ sung: nạp danh sách chi bộ + số đảng viên -->
+<script src="chibo1.js"></script>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2433;--mute:#667085;--line:#ddd8cc;--keep:#1f7a4d;--keepbg:#e3f3ea;--drop:#b3261e;--dropbg:#fbe7e5;--warn:#9a6700;--warnbg:#fff3d1;--btn:#1d2433;--btnink:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#14171f;--card:#1e222d;--ink:#eceef3;--mute:#9aa3b5;--line:#343a49;--keep:#6fd3a0;--keepbg:#173626;--drop:#ff9a92;--dropbg:#42201e;--warn:#f2c14e;--warnbg:#3a2f12;--btn:#eceef3;--btnink:#14171f}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding:16px;max-width:760px;margin:0 auto;text-align:center}
+h1{font-size:1.45rem;margin:8px 0 6px}
+h2{font-size:1.05rem;margin:22px 0 4px}
+p.lead{color:var(--mute);margin:0 auto 16px;max-width:52ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+label{display:block;font-weight:600;margin:0 0 4px}
+input[type=file]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=file]{text-align:center}
+button{font:inherit;font-weight:600;background:var(--btn);color:var(--btnink);border:0;border-radius:8px;padding:10px 14px;margin-top:6px;cursor:pointer}
+button.icon{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#1f7a4d;color:#fff;padding:12px}
+button.icon svg{width:18px;height:18px;display:block}
+button.dl1{background:#1f7a4d;color:#fff;font-size:.88rem;padding:8px 12px;margin:10px 0 0}
+#fclear{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+
+/* Chọn 1 trong 3 chức năng */
+.modes{display:flex;flex-direction:column;gap:8px}
+button.mode{margin:0;background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:12px;text-align:center}
+button.mode[aria-pressed=true]{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+.opt{margin-top:12px;text-align:left}
+.opt select{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.opt .note{text-align:center}
+.cnt{color:var(--mute);font-weight:400}
+
+.sum{display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center}
+.sum b{font-size:1.4rem;display:block;line-height:1.1}
+.sum span{color:var(--mute);font-size:.88rem}
+.grp h3{margin:0 0 2px;font-size:1.02rem}
+.meta{color:var(--mute);font-size:.88rem;margin-bottom:8px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:520px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-weight:700;font-size:.8rem}
+.k{background:var(--keepbg);color:var(--keep)}.d{background:var(--dropbg);color:var(--drop)}
+.w{background:var(--warnbg);color:var(--warn);border-radius:6px;padding:4px 8px;margin:0 0 8px;font-size:.88rem}
+.err{background:var(--dropbg);color:var(--drop);padding:10px;border-radius:8px}
+.note{color:var(--mute);font-size:.86rem;margin:0 auto 10px;max-width:56ch}
+.pill{display:inline-block;background:var(--warnbg);color:var(--warn);border-radius:99px;padding:2px 10px;font-size:.82rem;font-weight:600;margin:2px}
+</style>
+</head>
+<body>
+<h1>Thống kê KetQuaThi</h1>
+<p class="lead">Chọn tệp sao lưu sheet KetQuaThi (.xlsx hoặc .csv). Sau khi mở tệp, chọn một trong ba chức năng: Lọc trùng bài, Chi bộ hoặc Điểm. Công cụ chỉ thống kê, không sửa dữ liệu, và chạy ngay trên máy bạn.</p>
+
+<div class="card">
+  <label for="f">Tệp sao lưu KetQuaThi</label>
+  <input id="f" type="file" accept=".xlsx,.xls,.csv">
+</div>
+
+<div class="card" id="modeCard" hidden>
+  <label>Chọn chức năng</label>
+  <div class="modes" role="group" aria-label="Chọn chức năng">
+    <button type="button" class="mode" data-m="dup">Lọc trùng bài</button>
+    <button type="button" class="mode" data-m="cb">Chi bộ</button>
+    <button type="button" class="mode" data-m="sc">Điểm</button>
+  </div>
+  <div class="opt" id="opt"></div>
+</div>
+
+<div id="out"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let ROWS = [];
+
+const norm = s => String(s == null ? '' : s).normalize('NFC').replace(/\s+/g,' ').trim().toLowerCase();
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function parseTime(s){
+  const m = String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s*(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  return m ? new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5], +(m[6]||0)).getTime() : NaN;
+}
+const num = v => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? NaN : n; };
+const T = x => isNaN(x) ? Infinity : x;
+
+/* ---------- Tiện ích: tra tổng số đảng viên & tính % ---------- */
+function getTongDangVien(tenChiBo){
+  try {
+    if (typeof laySoDangVienChiBo === 'function') {
+      const n = laySoDangVienChiBo(tenChiBo);
+      return (n == null || isNaN(n)) ? null : n;
+    }
+  } catch(e){}
+  return null;
+}
+function pct(a, b){ if (!b) return 0; return Math.round(a / b * 1000) / 10; }
+function infoThi(bai, tong){ return tong != null ? (bai + '/' + tong + ' – ' + pct(bai, tong) + '%') : (bai + ' bài'); }
+
+/* ---------- Chọn chức năng ---------- */
+let MODE = 'dup', SEL_CB = '', SEL_SC = '';
+
+/* Nhãn nút tải theo đúng mục đang chọn */
+const DL_LABEL = {
+  dup: 'Tải TẤT CẢ danh sách lọc trùng bài (.xlsx)',
+  cb:  'Tải TẤT CẢ chi bộ (.xlsx)',
+  sc:  'Tải danh sách điểm (.xlsx)'
+};
+
+function cbList(){
+  const m = new Map();
+  ROWS.forEach(r => { const k = norm(r.cb); if (!m.has(k)) m.set(k, {label:r.cb, rows:[]}); m.get(k).rows.push(r); });
+  return [...m.entries()].map(([k,v]) => ({key:k, label:v.label || '(để trống)', rows:v.rows}))
+    .sort((x,y) => x.label.localeCompare(y.label, 'vi'));
+}
+function scList(){
+  const m = new Map();
+  ROWS.forEach(r => { const k = isNaN(r.diem) ? 'na' : String(r.diem); if (!m.has(k)) m.set(k, {label:k === 'na' ? 'Chưa có điểm' : k, rows:[], v:r.diem}); m.get(k).rows.push(r); });
+  return [...m.entries()].map(([k,v]) => ({key:k, label:v.label, rows:v.rows, v:v.v}))
+    .sort((x,y) => (isNaN(y.v) ? -Infinity : y.v) - (isNaN(x.v) ? -Infinity : x.v));
+}
+
+function renderOpt(){
+  document.querySelectorAll('button.mode').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === MODE ? 'true' : 'false'));
+  const o = $('opt');
+  if (MODE === 'dup'){
+    o.innerHTML = '<p class="note" style="margin:0">Liệt kê những người nộp nhiều lần trong toàn bộ tệp.</p>';
+  } else if (MODE === 'cb'){
+    const opts = cbList().map(c => {
+      const tong = getTongDangVien(c.label);
+      return '<option value="' + esc(c.key) + '">' + esc(c.label) +
+             ' (' + infoThi(c.rows.length, tong) + ')</option>';
+    }).join('');
+    o.innerHTML = '<label for="selcb">Danh sách chi bộ</label><select id="selcb">' +
+      '<option value="">Tất cả chi bộ (' + ROWS.length + ' bài)</option>' + opts + '</select>';
+    $('selcb').value = SEL_CB;
+    $('selcb').onchange = e => { SEL_CB = e.target.value; renderOut(); };
+  } else {
+    o.innerHTML = '<label for="selsc">Danh sách điểm</label><select id="selsc"><option value="">Toàn bộ (' + ROWS.length + ' bài)</option>' +
+      scList().map(c => '<option value="' + esc(c.key) + '">' + esc(c.label) + (c.key === 'na' ? '' : ' điểm') + ' (' + c.rows.length + ')</option>').join('') + '</select>';
+    $('selsc').value = SEL_SC;
+    $('selsc').onchange = e => { SEL_SC = e.target.value; renderOut(); };
+  }
+}
+
+document.querySelectorAll('button.mode').forEach(b => b.addEventListener('click', () => {
+  MODE = b.dataset.m; renderOpt(); renderOut();
+}));
+
+/* ---------- Đọc tệp ---------- */
+$('f').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    $('out').innerHTML = '<div class="err">Chưa tải được thư viện đọc Excel. Hãy bật mạng rồi mở lại tệp này.</div>';
+    return;
+  }
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const wb = XLSX.read(rd.result, {type:'array'});
+      const name = wb.SheetNames.find(n => n.toLowerCase() === 'ketquathi') || wb.SheetNames[0];
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, raw:false, defval:''});
+      ROWS = [];
+      aoa.slice(1).forEach((r, i) => {
+        if (!norm(r[1])) return;
+        ROWS.push({row:i+2, ten:String(r[1]).trim(), nam:String(r[2]).trim(), cb:String(r[3]).trim(), de:String(r[4]).trim(),
+                   diem:num(r[5]), tg:num(r[7]), gio:String(r[11]).trim(), t:parseTime(r[11])});
+      });
+      if (!ROWS.length) throw new Error('Không thấy dòng dữ liệu nào ở cột B (Họ và tên).');
+      $('modeCard').hidden = false;
+      MODE = 'dup'; SEL_CB = ''; SEL_SC = '';
+      renderOpt();
+      renderOut();
+    } catch (err) {
+      $('out').innerHTML = '<div class="err">Không đọc được tệp: ' + esc(err.message) + '</div>';
+    }
+  };
+  rd.readAsArrayBuffer(file);
+});
+
+function sortTime(list){ return list.slice().sort((a,b) => T(a.t) - T(b.t) || a.row - b.row); }
+function orderDiff(list){ const a = sortTime(list), b = list.slice().sort((x,y) => x.row - y.row); return a.some((r,i) => r.row !== b[i].row); }
+
+function analyse(rows){
+  const byPerson = new Map();
+  rows.forEach(r => {
+    const k = norm(r.ten) + '|' + norm(r.cb);
+    if (!byPerson.has(k)) byPerson.set(k, []);
+    byPerson.get(k).push(r);
+  });
+  const same = [], suspect = [];
+  byPerson.forEach(list => {
+    const byYear = new Map();
+    list.forEach(r => { const y = norm(r.nam); if (!byYear.has(y)) byYear.set(y, []); byYear.get(y).push(r); });
+    byYear.forEach(l => { if (l.length > 1) same.push({list:sortTime(l)}); });
+    if (byYear.size > 1) suspect.push({list:sortTime(list), years:byYear});
+  });
+  const by = (a,b) => b.list.length - a.list.length || a.list[0].ten.localeCompare(b.list[0].ten, 'vi');
+  return {same:same.sort(by), suspect:suspect.sort(by)};
+}
+
+function fmtTg(v){ if (isNaN(v)) return ''; const t = Math.round(v); return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0'); }
+
+function table(list, firstOf){
+  let h = '<div class="tbl"><table><tr><th>Dòng</th><th>Năm sinh</th><th>Bộ đề</th><th>Đúng</th><th>Làm (phút:giây)</th><th>Giờ nộp</th><th>Đánh dấu</th></tr>';
+  list.forEach(r => {
+    const k = firstOf(r) === r;
+    h += '<tr><td>' + r.row + '</td><td>' + esc(r.nam) + '</td><td>' + esc(r.de) + '</td><td>' + (isNaN(r.diem) ? '' : r.diem) + '</td><td>' +
+         fmtTg(r.tg) + '</td><td>' + esc(r.gio) + '</td><td><span class="tag ' + (k ? 'k">Công nhận' : 'd">Nộp lại') + '</span></td></tr>';
+  });
+  return h + '</table></div>';
+}
+
+const sortScore = list => list.slice().sort((a,b) => (isNaN(b.diem) ? -Infinity : b.diem) - (isNaN(a.diem) ? -Infinity : a.diem) || T(a.tg) - T(b.tg) || T(a.t) - T(b.t) || a.row - b.row);
+
+function listTable(list, showCb){
+  let h = '<div class="tbl"><table><tr><th>STT</th><th>Họ và tên</th><th>Năm sinh</th>' + (showCb ? '<th>Chi bộ</th>' : '') +
+          '<th>Bộ đề</th><th>Đúng</th><th>Làm (phút:giây)</th><th>Giờ nộp</th></tr>';
+  list.forEach((r, i) => {
+    h += '<tr><td>' + (i+1) + '</td><td>' + esc(r.ten) + '</td><td>' + esc(r.nam) + '</td>' + (showCb ? '<td>' + esc(r.cb) + '</td>' : '') +
+         '<td>' + esc(r.de) + '</td><td>' + (isNaN(r.diem) ? '' : r.diem) + '</td><td>' + fmtTg(r.tg) + '</td><td>' + esc(r.gio) + '</td></tr>';
+  });
+  return h + '</table></div>';
+}
+const listRow = (r) => [r.row, r.ten, r.nam, r.cb, r.de, isNaN(r.diem) ? '' : r.diem, fmtTg(r.tg), r.gio];
+const LIST_HEAD = ['Dòng','Họ và tên','Năm sinh','Chi bộ','Bộ đề','Số câu đúng','Thời gian làm bài (phút:giây)','Thời gian nộp'];
+
+/* Nút tải: nhãn thể hiện ĐÚNG mục đang chọn */
+function dlCard(){
+  let lbl = DL_LABEL[MODE];
+  if (MODE === 'cb' && SEL_CB) lbl = 'Tải danh sách chi bộ này (.xlsx)';
+  return '<div class="card"><button id="csv">' + lbl + '</button></div>';
+}
+/* Nút tải riêng cho từng mục (chi bộ / nhóm trùng) */
+const dl1 = (attr, text) => '<button type="button" class="dl1" ' + attr + '>' + text + '</button>';
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('button.dl1');
+  if (!b) return;
+  if (b.dataset.cb != null) download({cb: b.dataset.cb});
+  else download({dk: b.dataset.dk, di: +b.dataset.di});
+});
+
+function renderOut(){
+  if (!ROWS.length) return;
+  if (MODE === 'dup') return renderDup();
+  if (MODE === 'cb')  return renderCb();
+  return renderSc();
+}
+
+/* ----- 1. Lọc trùng bài ----- */
+function renderDup(){
+  const res = analyse(ROWS);
+  const extra = res.same.reduce((s,g) => s + g.list.length - 1, 0);
+  let h = '<div class="card sum">' +
+    '<div><b>' + ROWS.length + '</b><span>bài trong tệp</span></div>' +
+    '<div><b>' + res.same.length + '</b><span>người làm nhiều bài</span></div>' +
+    '<div><b>' + extra + '</b><span>lượt nộp lại</span></div>' +
+    '<div><b>' + res.suspect.length + '</b><span>nhóm cần xem (khác năm sinh)</span></div></div>';
+
+  h += '<h2>Cùng họ tên, chi bộ và năm sinh</h2><p class="note">Coi là một người. Bài gửi sớm nhất được công nhận, các lượt sau đánh dấu là nộp lại.</p>';
+  if (!res.same.length) h += '<div class="card">Không có trường hợp nào.</div>';
+  res.same.forEach(g => {
+    const fst = g.list[0];
+    h += '<div class="card grp"><h3>' + esc(fst.ten) + '</h3><div class="meta">' + esc(fst.cb) + ', sinh ' + esc(fst.nam) + ', ' + g.list.length + ' lượt nộp</div>';
+    if (orderDiff(g.list)) h += '<div class="w">Thứ tự theo giờ nộp khác thứ tự dòng. Hãy đối chiếu giờ gốc ở cột A của DuPhong_x.</div>';
+    h += table(g.list, () => fst) + dl1('data-dk="same" data-di="' + res.same.indexOf(g) + '"', 'Tải riêng nhóm này (.xlsx)') + '</div>';
+  });
+
+  h += '<h2>Cùng họ tên và chi bộ nhưng khác năm sinh</h2><p class="note">Có thể là hai người khác nhau hoặc nhập sai năm sinh. Chỉ để xét khi cần, mỗi năm sinh được đánh dấu riêng.</p>';
+  if (!res.suspect.length) h += '<div class="card">Không có trường hợp nào.</div>';
+  res.suspect.forEach(g => {
+    const fst = g.list[0], first = new Map();
+    g.years.forEach((l, y) => first.set(y, sortTime(l)[0]));
+    h += '<div class="card grp"><h3>' + esc(fst.ten) + '</h3><div class="meta">' + esc(fst.cb) + ', ' + g.years.size + ' năm sinh khác nhau, ' + g.list.length + ' lượt nộp</div>' +
+         table(g.list, r => first.get(norm(r.nam))) + dl1('data-dk="suspect" data-di="' + res.suspect.indexOf(g) + '"', 'Tải riêng nhóm này (.xlsx)') + '</div>';
+  });
+
+  h += dlCard();
+  $('out').innerHTML = h;
+  $('csv').onclick = () => download();
+}
+
+/* ----- 2. Chi bộ ----- */
+function renderCb(){
+  const all = cbList();
+  const groups = SEL_CB ? all.filter(c => c.key === SEL_CB) : all;
+
+  const tongBai = groups.reduce((s,c) => s + c.rows.length, 0);
+  let tongDV = 0, coTongDV = false;
+  groups.forEach(c => {
+    const n = getTongDangVien(c.label);
+    if (n != null) { tongDV += n; coTongDV = true; }
+  });
+
+  let h = '<div class="card sum">' +
+    '<div><b>' + groups.length + '</b><span>chi bộ</span></div>' +
+    '<div><b>' + tongBai + '</b><span>bài nộp</span></div>';
+  if (coTongDV && tongDV > 0) {
+    h += '<div><b>' + pct(tongBai, tongDV) + '%</b><span>tỷ lệ dự thi (' +
+         tongBai + '/' + tongDV + ')</span></div>';
+  }
+  h += '</div>';
+
+  groups.forEach(c => {
+    const rows = sortScore(c.rows);
+    const tong = getTongDangVien(c.label);
+    h += '<div class="card grp"><h3>' + esc(c.label) + '</h3>' +
+         '<div class="meta">' + infoThi(rows.length, tong) + '</div>' +
+         listTable(rows, false) +
+         (SEL_CB ? '' : dl1('data-cb="' + esc(c.key) + '"', 'Tải riêng chi bộ này (.xlsx)')) + '</div>';
+  });
+
+  h += dlCard();
+  $('out').innerHTML = h;
+  $('csv').onclick = () => download();
+}
+
+/* ----- 3. Điểm ----- */
+function renderSc(){
+  const rows = SEL_SC ? ROWS.filter(r => (isNaN(r.diem) ? 'na' : String(r.diem)) === SEL_SC) : ROWS;
+  const sorted = sortScore(rows);
+  const title = SEL_SC ? (SEL_SC === 'na' ? 'Chưa có điểm' : 'Điểm ' + SEL_SC) : 'Toàn bộ điểm';
+  let h = '<div class="card sum"><div><b>' + sorted.length + '</b><span>bài nộp</span></div></div>' +
+          '<div class="card grp"><h3>' + esc(title) + '</h3><div class="meta">Xếp số câu đúng nhiều đến ít, cùng số câu đúng thì ai làm nhanh hơn đứng trước</div>' + listTable(sorted, true) + '</div>';
+  h += dlCard();
+  $('out').innerHTML = h;
+  $('csv').onclick = () => download();
+}
+
+/* ---------- DỰNG FILE XUẤT THEO ĐÚNG MỤC ĐANG CHỌN ---------- */
+function buildExport(opt){
+  opt = opt || {};
+  const safeName = t => String(t).replace(/[\\/:*?"<>|]/g,'_').slice(0,60);
+
+  /* Tải riêng 1 nhóm trùng */
+  if (opt.dk){
+    const res = analyse(ROWS);
+    const g = (opt.dk === 'same' ? res.same : res.suspect)[opt.di];
+    const dh = ['Dòng','Họ và tên','Năm sinh','Chi bộ','Bộ đề','Số câu đúng','Thời gian làm bài (phút:giây)','Thời gian nộp','Đánh dấu'];
+    const firstOf = opt.dk === 'same' ? (() => g.list[0]) : (r => sortTime(g.years.get(norm(r.nam)))[0]);
+    const aoa = [dh].concat(g.list.map(r => [r.row, r.ten, r.nam, r.cb, r.de, isNaN(r.diem) ? '' : r.diem, fmtTg(r.tg), r.gio, firstOf(r) === r ? 'Công nhận' : 'Nộp lại']));
+    return {file:'loc-trung-bai - ' + safeName(g.list[0].ten) + '.xlsx',
+            sheets:[{name:'Nhom trung', aoa, wch:[6,26,10,30,14,12,16,22,12]}]};
+  }
+
+  /* Tải riêng 1 chi bộ */
+  if (opt.cb != null){
+    const c = cbList().find(x => x.key === opt.cb);
+    const aoa = [LIST_HEAD];
+    sortScore(c.rows).forEach(r => aoa.push(listRow(r)));
+    return {file:'danh-sach-chi-bo - ' + safeName(c.label) + '.xlsx',
+            sheets:[{name:'Chi bo', aoa, wch:[6,26,10,30,14,12,16,22]}]};
+  }
+
+  if (MODE === 'dup'){
+    const res = analyse(ROWS);
+    const dh = ['Nhóm','Dòng','Họ và tên','Năm sinh','Chi bộ','Bộ đề','Số câu đúng','Thời gian làm bài (phút:giây)','Thời gian nộp','Đánh dấu'];
+    const mk = (groups, firstOf) => {
+      const aoa = [dh];
+      groups.forEach((g, i) => g.list.forEach(r => aoa.push([i+1, r.row, r.ten, r.nam, r.cb, r.de,
+        isNaN(r.diem) ? '' : r.diem, fmtTg(r.tg), r.gio, firstOf(g, r) === r ? 'Công nhận' : 'Nộp lại'])));
+      return aoa;
+    };
+    return {file:'loc-trung-bai.xlsx', sheets:[
+      {name:'Cung nam sinh', aoa:mk(res.same, g => g.list[0]), wch:[6,6,26,10,30,14,12,16,22,12]},
+      {name:'Khac nam sinh', aoa:mk(res.suspect, (g, r) => sortTime(g.years.get(norm(r.nam)))[0]), wch:[6,6,26,10,30,14,12,16,22,12]}]};
+  }
+
+  if (MODE === 'cb'){
+    const all = cbList();
+    const groups = SEL_CB ? all.filter(c => c.key === SEL_CB) : all;
+    const aoa = [LIST_HEAD];
+    groups.forEach(c => sortScore(c.rows).forEach(r => aoa.push(listRow(r))));
+    const label = (SEL_CB && groups[0]) ? groups[0].label : 'tat-ca-chi-bo';
+    const safe = String(label).replace(/[\\/:*?"<>|]/g,'_').slice(0,60);
+    return {file:'danh-sach-chi-bo - ' + safe + '.xlsx',
+            sheets:[{name:'Chi bo', aoa, wch:[6,26,10,30,14,12,16,22]}]};
+  }
+
+  // MODE === 'sc'
+  const rows = SEL_SC ? ROWS.filter(r => (isNaN(r.diem) ? 'na' : String(r.diem)) === SEL_SC) : ROWS;
+  const sorted = sortScore(rows);
+  const label = SEL_SC ? (SEL_SC === 'na' ? 'chua-co-diem' : 'diem-' + SEL_SC) : 'toan-bo-diem';
+  return {file:'danh-sach-diem - ' + label + '.xlsx',
+          sheets:[{name:'Diem', aoa:[LIST_HEAD].concat(sorted.map(listRow)), wch:[6,26,10,30,14,12,16,22]}]};
+}
+
+function download(opt){
+  if (typeof XLSX === 'undefined') { alert('Chưa tải được thư viện Excel. Hãy bật mạng rồi thử lại.'); return; }
+  if (!ROWS.length) return;
+  const EXP = buildExport(opt);   // luôn dựng lại theo MỤC ĐANG CHỌN
+  const wb = XLSX.utils.book_new();
+  EXP.sheets.forEach(s => {
+    const ws = XLSX.utils.aoa_to_sheet(s.aoa);
+    ws['!cols'] = s.wch.map(w => ({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws, s.name);
+  });
+  const buf = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  saveBlob(new Blob([buf], {type:XLSX_MIME}), EXP.file);
+}
+
+const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+function toast(msg){
+  let t = $('toast');
+  if (!t){
+    t = document.createElement('div'); t.id = 'toast';
+    t.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--btn);color:var(--btnink);padding:10px 16px;border-radius:10px;max-width:90%;z-index:99;font-size:.92rem';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(t._h); t._h = setTimeout(() => { t.hidden = true; }, 6000);
+}
+
+/* Cho người dùng CHỌN NƠI LƯU:
+   1) Máy tính (Chrome/Edge): hộp thoại "Lưu thành" chọn thư mục
+   2) Điện thoại (Android/iPhone): bảng chia sẻ, chọn "Lưu vào Tệp", Drive, Zalo...
+   3) Không hỗ trợ: tải thẳng về thư mục Tải xuống */
+async function saveBlob(blob, filename){
+  // 1) Hộp thoại chọn thư mục (máy tính)
+  if (window.showSaveFilePicker){
+    try {
+      const h = await window.showSaveFilePicker({suggestedName: filename,
+        types:[{description:'Excel', accept:{[XLSX_MIME]:['.xlsx']}}]});
+      const w = await h.createWritable(); await w.write(blob); await w.close();
+      toast('Đã lưu: ' + h.name);
+      return;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;   // người dùng bấm Hủy
+    }
+  }
+  // 2) Bảng chia sẻ / lưu của điện thoại
+  try {
+    const file = new File([blob], filename, {type: XLSX_MIME});
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title: filename});
+      toast('Đã gửi tệp. Nếu chọn "Lưu vào Tệp" hoặc Drive thì tệp nằm ở nơi bạn chọn.');
+      return;
+    }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;     // người dùng bấm Hủy
+  }
+  // 3) Tải thẳng về thư mục Tải xuống
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  toast('Đã tải về thư mục Tải xuống (Downloads): ' + filename);
+}
+</script>
+</body>
+</html>
